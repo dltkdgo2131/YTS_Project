@@ -7,7 +7,7 @@ void HelloWorld::DoJump()
 {
 	C_animation(2);
 	direction = 1;
-	isCrush = false;
+	//isCrush = false;
 	gravity = jump_Speed;
 	n_JumpCount++;
 }
@@ -40,13 +40,14 @@ void HelloWorld::JumpProcess()
 		break;
 	case 2:
 		y -= gravity;
-		//if (y > y_base)
-		//	gravity += jump_accell;
-		if (isCrush == false)
+		if (y > y_base)
 			gravity += jump_accell;
+		/*if (isCrush == false)
+			gravity += jump_accell;*/
 		else
 		{
 			direction = 0;
+			y = y_base;
 		}
 		break;
 	} 

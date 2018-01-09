@@ -16,6 +16,8 @@ public:
 	bool AbleDress[10];
 	bool AbleAcc[10];
 	int ScreenX;
+	int StageNum;
+	int ilust_num = 0;
 	point()
 	{
 		/*for (int i = 0; i < 10; i++)

@@ -30,7 +30,12 @@ public:
 	Sprite * item3;
 	Sprite * Button;
 	Sprite * All;
-	
+	MenuItemImage *Quit;
+	////
+	Sprite *BG;
+	Sprite *BG2;
+	Sprite *MoveAll;
+	///
 	bool close;
 	bool bisclick;
 	int Sex;

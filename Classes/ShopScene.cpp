@@ -50,21 +50,34 @@ bool Shop::init()
 	DressNum = UserDefault::getInstance()->getFloatForKey("DressNum");
 	AccNum = UserDefault::getInstance()->getFloatForKey("AccNum");
 
-	auto Quit = MenuItemImage::create("BackBt.png", "BackBt2.png", CC_CALLBACK_1(Shop::menuCallback, this));
+	Quit = MenuItemImage::create("Shop/X.png", "Shop/X_P.png", CC_CALLBACK_1(Shop::menuCallback, this));
 	auto menu = Menu::create(Quit, NULL);
-	menu->setPosition(Vec2(100, 650));
-	this->addChild(menu, 1);
-	
-	item1 = Sprite::create("1.png");
-	item1->setPosition(Vec2(400, 250));
-	
-	this->addChild(item1, 1);
+	Quit->setVisible(false);
+	Quit ->setScale(0.9f);
+	menu->setPosition(Vec2(1230, 670));
+	this->addChild(menu, 3);
 
-	item2 = Sprite::create("1.png");
-	item2->setPosition(Vec2(850, 250));
 	
-	this->addChild(item2, 1);
+	item1 = Sprite::create("Shop/buy.png");
+	item1->setAnchorPoint(Vec2(0, 0));
+	item1->setPosition(Vec2(1360, 100));
+	this->addChild(item1, 2);
 
+	item2 = Sprite::create("Shop/buy.png");
+	item2->setAnchorPoint(Vec2(0, 0));
+	item2->setPosition(Vec2(1770, 100));
+	this->addChild(item2, 2);
+
+	BG2 = Sprite::create("Shop/BG_2.png");
+	BG2->setAnchorPoint(Vec2(0, 0));
+	BG2->setPosition(Vec2(1280, 10));
+	this->addChild(BG2, 1);
+
+	item1->runAction(MoveBy::create(1, Vec2(-870, 0)));
+	item2->runAction(MoveBy::create(1, Vec2(-870, 0)));
+	BG2->runAction(MoveBy::create(1, Vec2(-870, 0)));
+
+	
 	All = Sprite::create();
 	this->addChild(All, 2);
 	All->setVisible(false);
@@ -80,14 +93,12 @@ bool Shop::init()
 	
 
 	Money = Label::createWithTTF("Money", "fonts/Marker Felt.ttf", 24);
-	Money->setString(StringUtils::format("My  Money: %d",MyMoney));
-	Money->setPosition(Vec2(650, 650));
+	Money->setString(StringUtils::format("%d",MyMoney));
+	Money->setPosition(Vec2(150, 670));
+	Money->setColor(Color3B(0,0,0));
 	this->addChild(Money, 1);
 	
-	Getdress = Label::createWithTTF("Buy  Dress", "fonts/Marker Felt.ttf", 24);
-	Getdress->setPosition(Vec2(400, 400));
 	
-	this->addChild(Getdress, 1);
 
 	Rand = Label::createWithTTF("Random", "fonts/Marker Felt.ttf", 24);
 	R = rand() % 10;
@@ -95,12 +106,18 @@ bool Shop::init()
 	Rand->setPosition(Vec2(600, 350));
 	this->addChild(Rand, 2);
 
-	Getaccessory = Label::createWithTTF("Buy  accessory", "fonts/Marker Felt.ttf", 24);
-	Getaccessory->setPosition(Vec2(850, 400));
 	
-	this->addChild(Getaccessory, 1);
  
+	BG = Sprite::create("Shop/BG_3.png");
+	BG->setAnchorPoint(Vec2(0, 0));
+	BG->setPosition(Vec2(0, 0));
+	this->addChild(BG, 0);
 
+	auto coin = Sprite::create("Shop/coin.png");
+	coin->setPosition(Vec2(50, 670));
+	this->addChild(coin, 2);
+
+	
 	scheduleUpdate();
 	return true;
 }
@@ -144,19 +161,20 @@ bool Shop::onTouchBegan(Touch* touch, Event*_event)
 		{
 			if (item1->getBoundingBox().containsPoint(touch->getLocation()))
 			{
-				item1->setTexture(Director::getInstance()->getTextureCache()->addImage("2.png"));
+				item1->setTexture(Director::getInstance()->getTextureCache()->addImage("Shop/buy_p.png"));
 				bisclick = true;
 				Sex = 1;
 			}
 			if (item2->getBoundingBox().containsPoint(touch->getLocation()))
 			{
-				item2->setTexture(Director::getInstance()->getTextureCache()->addImage("2.png"));
+				item2->setTexture(Director::getInstance()->getTextureCache()->addImage("Shop/buy_p.png"));
 				bisclick = true;
 				Sex = 2;
 			}
 		}
-			if (Button->getBoundingBox().containsPoint(touch->getLocation()))
+			if (Button->getBoundingBox().containsPoint(touch->getLocation())&&All->isVisible()==true)
 			{
+				CCLOG("3");
 				All->setVisible(false);
 				close = true;
 				bisclick = false;
@@ -194,8 +212,8 @@ void Shop::onTouchEnded(Touch* touch, Event*_event)
 		}
 	
 	
-	item1->setTexture(Director::getInstance()->getTextureCache()->addImage("1.png"));
-	item2->setTexture(Director::getInstance()->getTextureCache()->addImage("1.png"));
+	item1->setTexture(Director::getInstance()->getTextureCache()->addImage("Shop/buy.png"));
+	item2->setTexture(Director::getInstance()->getTextureCache()->addImage("Shop/buy.png"));
 	//Sex = 0;
 	
 }
@@ -204,7 +222,11 @@ void Shop::onTouchEnded(Touch* touch, Event*_event)
 void Shop::update(float dt)
 {
 	static float t = 0;
-	
+	if (BG2->getPositionX() < 500)
+	{
+		Quit->setVisible(true);
+	}
+
 
 
 }
@@ -215,22 +237,23 @@ void Shop::ClickBuy(int Clicknum)
 	{
 		if (Clicknum == 1 && MyMoney >= 1000)
 		{
+			CCLOG("1");
 			MyMoney -= 1000;
-			Money->setString(StringUtils::format("My  Money: %d", MyMoney));
-			R = rand() % 10+1;
+			Money->setString(StringUtils::format("%d", MyMoney));
+			R = rand() % 5;
 			Rand->setString(StringUtils::format("%d", R));
 			point::get()->DressArr[DressNum] = R;
-			point::get()->AbleDress[R-1] = true;
+			point::get()->AbleDress[R] = true;
 			DressNum++;
 		}
 		else if (Clicknum == 2 && MyMoney >= 3000)
 		{
 			MyMoney -= 3000;
-			Money->setString(StringUtils::format("My  Money: %d", MyMoney));
-			R = rand() % 10+1;
+			Money->setString(StringUtils::format("%d", MyMoney));
+			R = rand() % 5;
 			Rand->setString(StringUtils::format("%d", R));
 			point::get()->AccArr[AccNum] = R;
-			point::get()->AbleAcc[R - 1] = true;
+			point::get()->AbleAcc[R] = true;
 			AccNum++;
 		}
 	}
@@ -243,7 +266,7 @@ void Shop::JAJAN()
 	close = false;
 	bisclick = true;
 	
-	CCLOG("%d", close);
+	//CCLOG("%d", close);
 }
 
 

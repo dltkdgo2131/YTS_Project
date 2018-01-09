@@ -2,6 +2,8 @@
 #include "cocos2d.h"
 #include "MyBodyParser.h"
 #include "stdlib.h"
+#include "LabelTypingEffect.h"
+#include "SingleTone.h" 
 USING_NS_CC;
 
 enum _item { bigger, teemo, fast, slow };
@@ -49,6 +51,9 @@ public:
 	bool isJump = false;
 	bool isSlide = false;
 	bool isCrush;
+	bool isBigger;
+	bool isFast;
+
 	///backGround////////////
 	int Chapter;
 	int Stage;
@@ -56,13 +61,36 @@ public:
 	Sprite* backGround2;
 	/// Sprite //////////////
 
-
 	Sprite* cake[2000];
 	Sprite *_Stick1[200];
 	Sprite *Hurdle[2000];
 	Sprite *Heart[4];
 	Sprite *Fiver[5];
 
+	/// 스토리//
+
+	float time_label;
+	int m_label;
+	Label *story;
+	Vec2 story_Offset;
+	Label *NickName;
+
+	/// Script ////////
+	Sprite* _script_BackGround1;
+	Sprite* _script_BackGround2;
+	Sprite* _script_BackGround3;
+	Sprite* rabbit;
+	Sprite* rabbit2;
+
+	Node * _script;
+	Sprite* Alice;
+	TTFConfig _config;
+	Sprite* script_BackGround;
+	Sprite * Skip;
+	Sprite * Chat;
+	Sprite * Button;
+	Sprite * Nick;
+	void opacity_Button();
 	/// 엘리스 //////////////////
 	Sprite* C_1;
 	PhysicsBody *C_1Body;
@@ -100,6 +128,13 @@ public:
 	Sprite* clear_Background;
 	Label* goal;
 
+
+
+	/// Stage ////////
+	bool isStart;
+	int ing_Messege;
+	void Stage1(Label* label);
+
 	/// function ////////////
 	virtual bool onTouchBegan(Touch* touch, Event* _event);
 	virtual void onTouchMoved(Touch* touch, Event* _event);
@@ -123,6 +158,7 @@ public:
 	void setAnimation();
 	void setMath();
 	void setClear();
+	void setScript();
 
 	/// 발판 , 케이크, 장애물 /////
 	Animation* Spider_ani;

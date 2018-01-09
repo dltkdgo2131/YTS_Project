@@ -1,5 +1,6 @@
 #include"HelloWorldScene.h"
 #include "cocos2d.h"
+#pragma execution_character_set("UTF-8")
 
 USING_NS_CC;
 void HelloWorld::setCamera()
@@ -25,7 +26,6 @@ void HelloWorld::setBackGround()
 	this->addChild(backGround1);
 	this->addChild(backGround2);
 }
-
 void HelloWorld::setKeyListener()
 {
 	EventListenerKeyboard* keylistener = EventListenerKeyboard::create();
@@ -33,7 +33,6 @@ void HelloWorld::setKeyListener()
 	keylistener->onKeyReleased = CC_CALLBACK_2(HelloWorld::onKeyReleased, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(keylistener, this);
 }
-
 void HelloWorld::setCharacter()
 {
 	C_location.setPoint(300, 200);
@@ -62,7 +61,7 @@ void HelloWorld::setCharacter()
 	C_1Body->setRotationEnable(false);
 	C_1Body->setGravityEnable(false);
 	C_1->setPhysicsBody(C_1Body);
-
+	C_1->setVisible(false);
 	this->addChild(C_1, 10);
 
 	C_animation(1);
@@ -79,6 +78,11 @@ void HelloWorld::setHeart()
 }
 void HelloWorld::setUI()
 {
+
+
+	m_label = 1;
+	time_label = 0.2f;
+
 	i_Collecting_Coin = 0;
 	Collecting_Coin = Label::create("", "fonts/NanumBarun/NanumBarun.ttf", 24);
 	Collecting_Coin->setPosition(83, 475);
@@ -151,6 +155,10 @@ void HelloWorld::setMath()
 	Chapter = 2;
 	CountHurdle += 0;
 	isCrush = false;
+	isStart = false;
+	ing_Messege = 1;
+
+	Stage = point::get()->StageNum;
 }
 void HelloWorld::setAnimation()
 {
@@ -186,4 +194,92 @@ void HelloWorld::setItem()
 	this->addChild(Teemo, 13);
 
 	CakeSection = 0;
+}
+void HelloWorld::setScript()
+{
+	story_Offset = Vec2(500, 200);
+
+	_script = Node::create();
+	this->addChild(_script, 9);
+
+	switch (Stage)
+	{
+	case 1:
+		_script_BackGround1 = Sprite::create("Texture/backGround/Stage2_BackGround.png");
+		_script_BackGround1->setPosition(0, 0);
+		_script_BackGround1->setAnchorPoint(Point(0, 0));
+		_script->addChild(_script_BackGround1);
+
+		_script_BackGround2 = Sprite::create("Texture/Object/UI/backGround.png");
+		_script_BackGround2->setPosition(0, 0);
+		_script_BackGround2->setAnchorPoint(Point(0, 0));
+		_script->addChild(_script_BackGround2, 13);
+
+		_script_BackGround3 = Sprite::create("Texture/backGround/Stage1_BackGround.png");
+		_script_BackGround3->setPosition(0, 0);
+		_script_BackGround3->setAnchorPoint(Point(0, 0));
+		_script->addChild(_script_BackGround3, 1);
+		
+		break;
+	default:
+		break;
+	}
+
+	
+	story = Label::create("", "fonts/ChocoCookie.ttf", 48, Size(700, 200), TextHAlignment::LEFT);
+	story->setPosition(500, 200);
+	story->setColor(Color3B::RED);
+	_script->addChild(story,11);
+
+	script_BackGround = Sprite::create("Texture/Object/UI/backGround.png");
+	script_BackGround->setPosition(0, 0);
+	script_BackGround->setOpacity(147);
+	script_BackGround->setAnchorPoint(Point(0, 0));
+	_script->addChild(script_BackGround, 8);
+
+	Alice = Sprite::create(StringUtils::format("Texture/Character/%d.png",point::get()->ilust_num));
+	Alice->setOpacity(0);
+	Alice->setPosition(180, 300);
+	Alice->setAnchorPoint(Point(0.5f, 0.5f));
+	_script->addChild(Alice, 12);
+
+	rabbit = Sprite::create("Texture/backGround/Script/rabbit.jpg");
+	rabbit->setOpacity(0);
+	rabbit->setPosition(1100, 300);
+	rabbit->setScaleY(0.7f);
+	rabbit->setAnchorPoint(Point(0.5f, 0.5f));
+	_script->addChild(rabbit, 12);
+
+	rabbit2 = Sprite::create("Texture/backGround/Script/rabbit2.jpg");
+	rabbit2->setOpacity(0);
+	rabbit2->setPosition(1100, 300);
+	rabbit2->setScaleY(1.3f);
+	rabbit2->setAnchorPoint(Point(0.5f, 0.5f));
+	_script->addChild(rabbit2, 12);
+
+	NickName = Label::create("", "fonts/ChocoCookie.ttf", 32);
+	NickName->setPosition(Vec2(400, 220));
+	_script->addChild(NickName, 11);
+
+	Skip = Sprite::create("Texture/backGround/Script/Skip.png");
+	Skip->setScale(0.5f);
+	Skip->setPosition(Vec2(1235, 580));
+	_script->addChild(Skip, 10);
+
+	Chat = Sprite::create("Texture/backGround/Script/Chat.png");
+	Chat->setScaleY(0.9f);
+	Chat->setAnchorPoint(Vec2(0, 0));
+	Chat->setPosition(Vec2(0, 0));
+	_script->addChild(Chat, 9);
+
+	Button = Sprite::create("Texture/backGround/Script/Button.png");
+	Button->setScale(0.5f, 0.3);
+	Button->setPosition(Vec2(1235, 50));
+	_script->addChild(Button, 10);
+
+	Nick = Sprite::create("Texture/backGround/Script/Nick.png");
+	Nick->setPosition(Vec2(400, 220));
+	Nick->setOpacity(107);
+	Nick->setScale(0.2f);
+	_script->addChild(Nick, 10);
 }

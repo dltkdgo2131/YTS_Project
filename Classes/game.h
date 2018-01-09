@@ -21,15 +21,11 @@ public:
 	void DressOn();
 	void ScreenMove(int Num);
 	void BtEnded();
-
-	Sprite * Shose[5];
-
+	void StageMove();
 	Sprite *Closet;
 	Sprite * Shop;
 	Sprite * Alice1;
 	Sprite * PopUp;
-	Label* l_Shose;
-
 	///Chapter1
 	Sprite *AllCp;
 	Sprite * BackGround1;
@@ -71,18 +67,18 @@ public:
 	Sprite * OptionPop;
 	Sprite * OptionBack;
 	Sprite * VolumeUp;
+	Sprite * VolumeUp2;
 	Sprite * VolumeDown;
+	Sprite * VolumeDown2;
 	Sprite * Coin;
 	Sprite * LtArrow;
 	Sprite * RtArrow;
 	Sprite * Playbt;
 
 	bool bisClickDress;
-	int have_Shose;
 	int Sex;
 	int Sex2;
 	float VolumeNum;
-	float ShoseTime;
 	bool bisClick;
 	bool OptionClick;
 	bool StageClick;
@@ -94,20 +90,43 @@ public:
 	bool sexClick2;
 	bool ArrowClick;
 	bool closetClick;
-	Sprite *Closebt;
+//	Sprite *Closebt;
 	Sprite *All;
 	Sprite *Bt1[2];
 	Sprite * StartStage;
 	Sprite *Dress;
 	Sprite * Accessory;
 	Sprite * X;
-	Sprite * SelectDress[10];
+	Sprite * SelectDress[5];
 	Sprite * DressAll;
-
-	Sprite *SelectAcc[10];
+	bool New::LocalToWorldPosition(Node* pSender, Node* pSender2);
+	Sprite *SelectAcc[5];
 	Sprite * AccAll;
 	Sprite *visibleBg;
+	Sprite * Doors;
 
+	
+	MenuItemImage *Sound[2];
+	Menu *menu;
+	MenuItemImage *Sound2[2];
+	Menu *menu2;
+	MenuItemImage *Credit;
+	Menu *menu3;
+	Sprite *Stick[5];
+	Sprite *Stick2[5];
+	Sprite *Bg_Label;
+	Sprite *Eft_Label;
+	
+	int num;
+	int num2;
+	float v1 =0.5;
+	float v2 = 0.5;
+	bool FindRectIntersect(Node* pSender, Node* pSender2);
+	void SoundFunc(Ref*pSender);
+	void SoundFunc2(Ref*pSender);
+	void Credit_Func(Ref*pSender);
+	void MiniFunc(Ref*pSender);
+	Sprite*Closebt;
 	CREATE_FUNC(New);
 
 };

@@ -2,6 +2,7 @@
 #pragma execution_character_set("utf-8")
 #include "cocos2d.h"
 #include "game.h"
+
 USING_NS_CC;  // == using namespace cocos2d
 
 #define TAG_SPRITE_IMAGE 1000
@@ -19,16 +20,17 @@ public:
 	virtual void onTouchEnded(Touch* touch, Event*_event);
 
 	Sprite * All;
-
+	MenuItemImage *mini[2];
+	Menu *menu2;
 	bool bisClick;
 	int ClickNum;
-	
+
 	MenuItemImage *Chapters[4];
 	Menu* menu;
 	EventListenerTouchOneByOne* listener;
 
 	void StageBtnFunc(Ref* pSender);
-
+	void MiniFunc(Ref*pSender);
 	CREATE_FUNC(Chapter);
 
 };

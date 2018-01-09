@@ -14,14 +14,16 @@ void HelloWorld::MoveCake_Stick(float dt)
 	for (int i = 0; _Stick1[i] != nullptr; i++)
 	{
 		_Stick1[i]->runAction(MoveBy::create(FPS, Vec2(speed / 60, 0)));
-		if (_Stick1[i]->getPositionX() <= 1300 && _Stick1[i]->getPositionX() > 0)
+		if (_Stick1[i]->getPositionX() <= 1300 && _Stick1[i]->getPositionX() > -1300)
 		{
 			if (!(_Stick1[i]->isVisible() == true))
 			{
-				StickBody = PhysicsBody::createBox(_Stick1[i]->getContentSize(), PhysicsMaterial(0, 0, 0));
+				StickBody = PhysicsBody::createBox(Size(_Stick1[i]->getContentSize().width,_Stick1[i]->getContentSize().height / 4), PhysicsMaterial(0, 0, 0));
 				StickBody->setGravityEnable(false);
 				StickBody->setCollisionBitmask(200000 + i);
 				StickBody->setContactTestBitmask(true);
+					StickBody->setDynamic(false);
+					StickBody->setPositionOffset(Vec2(0, 200));
 				_Stick1[i]->setPhysicsBody(StickBody);
 				_Stick1[i]->setVisible(true);
 			}
@@ -47,6 +49,11 @@ void HelloWorld::MoveCake_Stick(float dt)
 				cake[i]->setPhysicsBody(CakeBody);
 				cake[i]->setVisible(true);
 			}
+		}
+		if (isFiver[5] == true && cake[i]->getPositionX() <= 800 && cake[i]->getPositionX() > 0)
+		{
+			cake[i]->setTexture(Director::getInstance()->getTextureCache()->addImage("Texture/Object/Item/Gold_Coin.png"));
+			cake[i]->setTag(2);
 		}
 		else if (cake[i]->getPositionX() <= 0)
 			if (isCake[i] == true && cake[i]->isVisible())
@@ -175,6 +182,12 @@ void HelloWorld::MoveCake_Stick(float dt)
 		FiverTime -= dt;
 		speed = -1200;
 	}
+	if (FiverTime <= 0.0f)
+	{
+		isFiver[5] = false;
+		FiverTime = 1000.0f;
+		speed = -600;
+	}
 
 	FastTime -= dt;
 	SlowTime -= dt;
@@ -248,7 +261,7 @@ void HelloWorld::JumpTwoCake() {
 	int Height = 0;
 	for (int i = lastCakeArr; i < 10 + lastCakeArr; i++)
 	{
-		if (4 + lastCakeArr > i && i < 5 + lastCakeArr)
+		if (4 + lastCakeArr <= i && i <= 5 + lastCakeArr)
 		{
 			cake[i] = Sprite::create("Texture/Object/Item/Gold_Coin.png");
 			cake[i]->setTag(2);
@@ -300,7 +313,6 @@ void HelloWorld::basicStick()
 		_Stick1[i]->setScale(1.0f, 1.2f);
 		_Stick1[i]->setVisible(false);
 		_Stick1[i]->setPosition((_Stick1[i]->getContentSize().width * i), 0);
-
 
 		this->addChild(_Stick1[i], 2);
 		CCLOG("%f", _Stick1[i]->getContentSize().height);
