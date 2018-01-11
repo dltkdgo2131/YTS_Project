@@ -18,6 +18,7 @@ public:
 	int ScreenX;
 	int StageNum;
 	int ilust_num = 0;
+	int Chapter = 1;
 	point()
 	{
 		/*for (int i = 0; i < 10; i++)

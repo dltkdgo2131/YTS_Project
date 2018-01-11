@@ -8,23 +8,24 @@ void HelloWorld::chapte1_S1()
 {
 	srand(time(NULL));
 	int counting = 0;
-	FiverCake(); VatCake();
+
 	for (int i = 0; i < 1; i++)
 	{
 		basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick();
 	}//	SlideCake();
-	for (int i = 0; i < 5; i++)
-	{
-		basicCake(4); SlideCake();
-		JumpCake(); JumpCake(); JumpCake();
-		JumpTwoCake(); JumpTwoCake();
-		biggerCake();
-		VatCake(); VatCake();
-		FastCake(); basicCake(4);
-		JumpCake(); JumpTwoCake(); JumpCake(); FiverCake();
-		basicCake(8); JumpCake(); JumpCake();
-		TeemoCake();
-	}
+	
+	biggerCake();
+	basicCake(2);
+	JumpCake();
+	JumpTwoCake();
+	basicCake(1);
+
+	JumpCake();
+	JumpCake();
+	JumpTwoCake();
+	JumpTwoCake();
+	SlideCake();
+
 	//for (int i = 0; i < 500; i++)
 	//{
 

@@ -23,7 +23,7 @@ void HelloWorld::MoveCake_Stick(float dt)
 				StickBody->setCollisionBitmask(200000 + i);
 				StickBody->setContactTestBitmask(true);
 					StickBody->setDynamic(false);
-					StickBody->setPositionOffset(Vec2(0, 200));
+					StickBody->setPositionOffset(Vec2(0, 100));
 				_Stick1[i]->setPhysicsBody(StickBody);
 				_Stick1[i]->setVisible(true);
 			}
@@ -35,7 +35,7 @@ void HelloWorld::MoveCake_Stick(float dt)
 				_Stick1[i]->setVisible(false);
 			}
 	}
-	for (int i = 0; cake[i] != nullptr; i++)
+	for (int i = 0 + removeCake; cake[i] != nullptr; i++)
 	{
 		cake[i]->runAction(MoveBy::create(FPS, Vec2(speed / 60, 0)));
 		if (cake[i]->getPositionX() <= 1300 && cake[i]->getPositionX() > 0)
@@ -54,12 +54,17 @@ void HelloWorld::MoveCake_Stick(float dt)
 		{
 			cake[i]->setTexture(Director::getInstance()->getTextureCache()->addImage("Texture/Object/Item/Gold_Coin.png"));
 			cake[i]->setTag(2);
+			cake[i]->setScale(0.5f);
 		}
 		else if (cake[i]->getPositionX() <= 0)
 			if (isCake[i] == true && cake[i]->isVisible())
 			{
+				
 				cake[i]->getPhysicsBody()->removeFromWorld();
-				cake[i]->setVisible(false);
+				if (removeCake < i + 1)
+					removeCake = i + 1;
+				this->removeChild(cake[i], true);
+
 			}
 	}
 	for (int i = 0; Hurdle[i] != nullptr; i++)
@@ -217,9 +222,18 @@ void HelloWorld::JumpCake()
 	int Height = 0;
 	for (int i = lastCakeArr; i < 6 + lastCakeArr; i++)
 	{
-		cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
-		cake[i]->setTag(1);
-		cake[i]->setScale(0.6f);
+		if (i >= lastCakeArr + 2 && i <= lastCakeArr)
+		{
+			cake[i] = Sprite::create("Texture/Object/Item/Gold_Coin.png");
+			cake[i]->setTag(2);
+			cake[i]->setScale(1.0f);
+		}
+		else
+		{
+			cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
+			cake[i]->setTag(1);
+			cake[i]->setScale(0.6f);
+		}
 		cake[i]->setPosition(1400 + (WIDTH * i), 250 + (70 * Height));
 		cake[i]->setVisible(false);
 		isCake[i] = true;
@@ -265,13 +279,14 @@ void HelloWorld::JumpTwoCake() {
 		{
 			cake[i] = Sprite::create("Texture/Object/Item/Gold_Coin.png");
 			cake[i]->setTag(2);
+			cake[i]->setScale(1.0f);
 		}
 		else 
 		{
 			cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
 			cake[i]->setTag(1);
+			cake[i]->setScale(0.6f);
 		} 
-		cake[i]->setScale(0.6f);
 		cake[i]->setPosition(1400 + (WIDTH * i), 300 + (70 * Height));
 		cake[i]->setVisible(false);
 		isCake[i] = true;
@@ -282,6 +297,13 @@ void HelloWorld::JumpTwoCake() {
 
 		this->addChild(cake[i], 5);
 	}
+	//_Stick1[lastStickArr] = Sprite::create("Texture/Object/Stick");
+	//_Stick1[lastStickArr]->setAnchorPoint(Point(0.5f, 0.5f));
+	//_Stick1[lastStickArr]->setPosition((1600 * lastCakeArr), 0);
+	//_Stick1[lastStickArr]->setScale(1.0f, 1.2f);
+	//_Stick1[lastStickArr]->setVisible(false);
+	//this->addChild(_Stick1[lastCakeArr]);
+
 	Hurdle[CountHurdle] = Sprite::create("Texture/Object/Hurdle/Chapter1/Table_Chair.png");
 	Hurdle[CountHurdle]->setPosition(1450 + WIDTH * (lastCakeArr + 4) - 30, 300);
 	Hurdle[CountHurdle]->setScale(1.0f, 1.0f);
@@ -302,7 +324,7 @@ void HelloWorld::JumpTwoCake() {
 	this->addChild(Hurdle[CountHurdle]);
 	CountHurdle++;
 	lastCakeArr += 10;
-}
+} 
 void HelloWorld::basicStick()
 {
 
@@ -434,6 +456,7 @@ void HelloWorld::biggerCake()
 
 	for (int i = 0 + lastCakeArr; i < 30 + lastCakeArr; i++)
 	{
+		
 		cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
 		cake[i]->setTag(1);
 		cake[i]->setScale(0.6f);
@@ -441,6 +464,15 @@ void HelloWorld::biggerCake()
 		cake[i]->setVisible(false);
 		isCake[i] = true;
 
+		if ((i - lastCakeArr) % 5 == 0)
+		{
+			cake[i + 1] = Sprite::create("Texture/Object/Item/Gold_Coin.png");
+			cake[i + 1]->setTag(2);
+			cake[i + 1]->setScale(1.0f);
+			cake[i + 1]->setPosition(100, 200);
+			i += 1;
+			this->addChild(cake[i + 1], 5);
+		}
 		this->addChild(cake[i], 5);
 	}
 	for (int i = 0 + CountHurdle; i < 10 + CountHurdle; i += 2)

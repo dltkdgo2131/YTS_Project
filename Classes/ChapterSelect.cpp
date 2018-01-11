@@ -70,7 +70,6 @@ bool Chapter::init()
 	s2->setPosition(Vec2(2560, 0));
 	layer->addChild(s2);
 
-
 	auto s3 = Sprite::create("Stage3/BG.png");
 	s3->setAnchorPoint(Vec2(0, 0));
 	s3->setPosition(Vec2(1280 * 3, 0));
@@ -78,13 +77,6 @@ bool Chapter::init()
 	///
 
 	//////
-
-
-
-
-
-
-
 
 	////
 	for (int i = 0; i < 4; i++)
@@ -126,8 +118,11 @@ void Chapter::StageBtnFunc(Ref* pSender)
 	{
 		if (((MenuItemImage*)pSender)->getTag() == i)
 		{
-			CCLOG("%d", Chapters[i]->getTag());
-			ClickNum = Chapters[i]->getTag();
+			//CCLOG("%d", Chapters[i]->getTag());
+			//ClickNum = Chapters[i]->getTag();
+			point::get()->ScreenX = -(1280 * Chapters[i]->getTag());
+			Scene *pScene = New::NewScene();
+			Director::getInstance()->replaceScene(pScene);
 		}
 	}
 	/*for (int i = 0; i < 4; i++)
@@ -135,15 +130,13 @@ void Chapter::StageBtnFunc(Ref* pSender)
 				SimpleAudioEngine::getInstance()->playEffect("BtClick.wav");
 				ClickNum = i;
 	}*/
-	for (int i = 0; i < 4; i++)
-	{
-		if (ClickNum == i)
-		{
-			point::get()->ScreenX = -(1280 * Chapters[i]->getTag());
-			Scene *pScene = New::NewScene();
-			Director::getInstance()->replaceScene(pScene);
-		}
-	}
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	if (ClickNum == i)
+	//	{
+
+	//	}
+	//}
 	
 }
 void Chapter::MiniFunc(Ref *pSender)

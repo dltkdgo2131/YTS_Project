@@ -16,8 +16,23 @@ void HelloWorld::setCamera()
 }
 void HelloWorld::setBackGround()
 {
-	backGround1 = Sprite::create("Texture/backGround/Stage1_BackGround.png");
-	backGround2 = Sprite::create("Texture/backGround/Stage1_BackGround.png");
+	switch (point::get()->Chapter)
+	{
+	case 1:
+		backGround1 = Sprite::create("Texture/backGround/Stage1_BackGround.png");
+		backGround2 = Sprite::create("Texture/backGround/Stage1_BackGround.png");
+	case 2:
+		chapter2_Bush = Node::create();
+		this->addChild(chapter2_Bush);
+		for(int i = 0; i < 4; i++)
+
+		backGround1 = Sprite::create("Texture/backGround/Stage2_BackGround.png");
+		backGround2 = Sprite::create("Texture/backGround/Stage2_BackGround.png");
+
+
+	default:
+		break;
+	}
 
 	backGround1->setAnchorPoint(Point(0, 0));
 	backGround2->setAnchorPoint(Point(0, 0));
@@ -157,6 +172,7 @@ void HelloWorld::setMath()
 	isCrush = false;
 	isStart = false;
 	ing_Messege = 1;
+	removeCake = 0;
 
 	Stage = point::get()->StageNum;
 }
@@ -282,4 +298,15 @@ void HelloWorld::setScript()
 	Nick->setOpacity(107);
 	Nick->setScale(0.2f);
 	_script->addChild(Nick, 10);
+}
+void HelloWorld::setParticle()
+{
+
+	//CakeParticle->setAngle(0);
+	//CakeParticle->setDuration(10);
+	//CakeParticle->setGravity(Point(100.0f, 100.0f));
+	//CakeParticle->setLife(100);
+	//CakeParticle->setPosition(Point(100, 100));
+	//CakeParticle->setSpeed(100);
+	//CakeParticle->setScale(1.0f);
 }

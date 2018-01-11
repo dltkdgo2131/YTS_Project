@@ -7,7 +7,7 @@ using namespace CocosDenshion;
 Scene* HelloWorld::createScene()
 {
 	Scene* scene = Scene::createWithPhysics();
-	//	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+		//scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 
 	auto layer = HelloWorld::create();
 	layer->SetPhysicsWorld(scene->getPhysicsWorld());
@@ -47,8 +47,10 @@ bool HelloWorld::init()
 	/// 캐릭터 ///////////////////
 	setCharacter();
 	setUI();
+	/// 파티클 ///////////////////
+	setParticle();
 
-	// 생명
+	/// 생명 /////////////////////
 	setHeart();
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(HelloWorld::onContactBegin, this);
@@ -81,17 +83,7 @@ void HelloWorld::update(float dt)
 	//	EatCake();
 	//	CrashHurdle();
 	/// 배경 반복 /////////
-	float x1 = backGround1->getPositionX();
-	float x2 = backGround2->getPositionX();
-
-	if (x2 < 0)
-	{
-		x1 = x2;
-		x2 = x1 + backGround1->getContentSize().width;
-	}
-
-	backGround1->setPosition(x1 - 10.0f, 0);
-	backGround2->setPosition(x2 - 10.0f, 0);
+	BackGround_Setting();
 
 	/// 플레이어 점프, 슬라이딩 /////////
 
@@ -173,17 +165,22 @@ bool HelloWorld::onContactBegin(PhysicsContact &contact)
 					h_Repeat = 2;
 				for (int j = 0; j < h_Repeat; j++)
 				{
+			/*		if (isFiver[5] = true)
+					{
+					Hurdle[i + j]->runAction(MoveBy::create(1.0f, Vec2(600, 600)));
+						Hurdle[i + j]->runAction(RotateBy::create(2.0f, Vec2(300, 0)));
+						
+					}*/
 					Hurdle[i + j]->setOpacity(127);
 					isHurdle[i + j] = false;
 					if (j == h_Repeat)
 						i += j;
 				}
+				
 				h_Repeat = 1;
 
 				Alice_Condition = 3;
 				B_time = 0.6f;
-
-				NowHeart--;
 				if (NowHeart == -1)
 					Director::getInstance()->replaceScene(TransitionCrossFade::create(1.0f, HelloWorld::createScene()));
 			}
@@ -196,8 +193,17 @@ bool HelloWorld::onContactBegin(PhysicsContact &contact)
 			if ((1 == a->getCollisionBitmask() && i + 10000 == b->getCollisionBitmask()) ||
 				(i + 10000 == a->getCollisionBitmask() && 1 == b->getCollisionBitmask()))
 			{
-				if(cake[i]->getTag() == 1)
+				if (cake[i]->getTag() == 1)
+				{
 					i_Collecting_Cake += 1;
+					CakeParticle = ParticleSystemQuad::create("Texture/Particle/CakeParticle.plist");
+					CakeParticle->setPosition(C_1->getPosition());
+					CakeParticle->setScale(0.1f);
+					CakeParticle->setLife(1.0f);
+			/*		CakeParticle->setSpeed(500);*/
+	//				CakeParticle->setAngle(300);
+					this->addChild(CakeParticle);
+				}
 				if (cake[i]->getTag() == 2)
 					i_Collecting_Coin += 1;
 
@@ -275,7 +281,8 @@ bool HelloWorld::onContactBegin(PhysicsContact &contact)
 	if (1 == a->getCollisionBitmask() && 100000 == b->getCollisionBitmask() ||
 		100000 == a->getCollisionBitmask() && 1 == b->getCollisionBitmask())
 	{
-		Director::getInstance()->replaceScene(TransitionFadeBL::create(0.5f, HelloWorld::createScene()));
+		Director::getInstance()->getScheduler()->pauseTarget(this);
+		/*Director::getInstance()->replaceScene(TransitionFadeBL::create(0.5f, HelloWorld::createScene()));*/
 	}
 	return true;
 }
@@ -295,13 +302,7 @@ bool HelloWorld::onTouchBegan(Touch* touch, Event* _event)
 			DoJump();
 	}
 	/// 팝업창 /////////
-	if (stop_Button->getBoundingBox().containsPoint(touch->getLocation()))
-	{
-		stop_BackGround->setVisible(true);
-		SimpleAudioEngine::getInstance()->playEffect("btClick.wav", false);
-		Director::getInstance()->getScheduler()->pauseTarget(this);
-		C_1->stopAllActions();
-	}
+
 	if (stop_BackGround->isVisible())
 	{
 		if (option->getBoundingBox().containsPoint(touch->getLocation()))
@@ -343,7 +344,141 @@ void HelloWorld::onTouchEnded(Touch* touch, Event* _event)
 	slide_Button->setTexture(Director::getInstance()->getTextureCache()->addImage("Texture/Object/UI/SlideButton.png"));
 	jump_Button->setTexture(Director::getInstance()->getTextureCache()->addImage("Texture/Object/UI/JumpButton.png"));
 	isSlide = false;
+	if (stop_Button->getBoundingBox().containsPoint(touch->getLocation()))
+	{
+		stop_BackGround->setVisible(true);
+		SimpleAudioEngine::getInstance()->playEffect("btClick.wav", false);
+		Director::getInstance()->getScheduler()->pauseTarget(this);
+		C_1->stopAllActions();
+	}
 
+	if (Skip->getBoundingBox().containsPoint(touch->getLocation()))
+	{
+		isStart = true;
+		scheduleUpdate();
+		C_1->setVisible(true);
+		_script->setVisible(false);
+		this->schedule(schedule_selector(HelloWorld::MoveCake_Stick), 1.0f / 60.0f);
+	}
+	if (!(stop_BackGround->isVisible()))
+	{
+		if (isStart == false)
+		{
+			switch (Stage)
+			{
+			case 1:
+				switch (ing_Messege)
+				{
+				case 1:
+					story->setPosition(620, 360);
+					//		story->setScale(1.5f);
+					story->setZOrder(14.0f);
+					NickName->setString("앨리스");
+					LabelTypingEffect::typeMessage(story, "따스한 햇볕이 내리는 오후 앨리스는 집에서 동화책을 읽고 있다. ", 0.05f, Color3B::WHITE);
+					break;
+				case 2:
+					story->setPosition(720, 80);
+					story->setZOrder(11.0f);
+					_script_BackGround2->runAction(FadeOut::create(1.0f));
+					LabelTypingEffect::typeMessage(story, "(똑 똑 똑)", 0.2f, Color3B::BLACK);
+					break;
+				case 3:
+					Alice->runAction(FadeIn::create(0.5f));
+					LabelTypingEffect::typeMessage(story, "어? 누가 왔나 보네.", 0.1f, Color3B::WHITE);
+					break;
+				case 4:
+					Alice->setOpacity(127);
+					LabelTypingEffect::typeMessage(story, "(끼익)", 0.2f, Color3B::BLACK);
+					break;
+				case 5:
+					_script_BackGround3->runAction(FadeOut::create(1.0f));
+					Alice->runAction(FadeIn::create(0.5f));
+					LabelTypingEffect::typeMessage(story, "뭐야? 아무도 없잖아!", 0.2f, Color3B::WHITE);
+					break;
+				case 6:
+					Alice->runAction(FadeTo::create(0.5f, 127));
+					rabbit->runAction(FadeIn::create(1.0f));
+					LabelTypingEffect::typeMessage(story, "신기하게 생긴 토끼가 지나간다", 0.05f, Color3B::BLACK);
+					break;
+				case 7:
+					rabbit->runAction(FadeTo::create(0.5f, 127));
+					Alice->runAction(FadeIn::create(1.0f));
+					LabelTypingEffect::typeMessage(story, "저 토끼 신기하다! 따라가 봐야지~ ", 0.1f, Color3B::WHITE);
+					break;
+				case 8:
+					Alice->runAction(FadeTo::create(0.5f, 127));
+					rabbit->runAction(FadeOut::create(1.0f));
+					LabelTypingEffect::typeMessage(story, "토끼는 계속 도망치다가 나무 안에 있는 토끼굴속으로 들어갔다.", 0.05f, Color3B::BLACK);
+					break;
+				case 9:
+					Alice->runAction(FadeTo::create(0.5f, 255));
+					LabelTypingEffect::typeMessage(story, "나무 속으로 도망가버렸네, 어떡하지?", 0.05f, Color3B::WHITE);
+					break;
+				case 10:
+					LabelTypingEffect::typeMessage(story, "몰라 나도 들어가자!", 0.05f, Color3B::WHITE);
+					break;
+				case 11:
+					_script_BackGround1->runAction(FadeOut::create(1.0f));
+					_script_BackGround2->runAction(Sequence::create(FadeIn::create(1.0f), FadeOut::create(1.0f), NULL));
+					script_BackGround->setVisible(false);
+					LabelTypingEffect::typeMessage(story, ".", 0.05f, Color3B::WHITE);
+					break;
+				case 12:
+					LabelTypingEffect::typeMessage(story, "음....여긴어디지? 분명 나무속으로 들어온거 같은데?", 0.05f, Color3B::WHITE);
+					break;
+				case 13:
+					NickName->setString("토끼");
+					Alice->runAction(FadeTo::create(0.5f, 127));
+					rabbit2->runAction(FadeTo::create(0.5f, 255));
+					LabelTypingEffect::typeMessage(story, "여긴 \"이상한 나라\"라는 곳이야", 0.05f, Color3B::WHITE);
+					break;
+				case 14:
+					NickName->setString("앨리스");
+					Alice->runAction(FadeTo::create(0.5f, 255));
+					rabbit2->runAction(FadeTo::create(0.5f, 127));
+					LabelTypingEffect::typeMessage(story, "뭐야 토끼가 말을 하네?", 0.05f, Color3B::WHITE);
+					break;
+				case 15:
+					NickName->setString("토끼");
+					Alice->runAction(FadeTo::create(0.5f, 127));
+					rabbit2->runAction(FadeTo::create(0.5f, 255));
+					LabelTypingEffect::typeMessage(story, "내가 말했잖아 여긴 이상한 나라라고 너희 세상에서는 상상할 수 없는 것 들이 수없이 많을껄?", 0.05f, Color3B::WHITE);
+					break;
+				case 16:
+					NickName->setString("앨리스");
+					Alice->runAction(FadeTo::create(0.5f, 255));
+					rabbit2->runAction(FadeTo::create(0.5f, 127));
+					LabelTypingEffect::typeMessage(story, "진짜 이상한 곳이네. 토끼야 여기서 나가려면 어떻게 해야 되?", 0.05f, Color3B::WHITE);
+					break;
+				case 17:
+					NickName->setString("토끼");
+					Alice->runAction(FadeTo::create(0.5f, 127));
+					rabbit2->runAction(FadeTo::create(0.5f, 255));
+					LabelTypingEffect::typeMessage(story, "어? 벌써 시간이 이렇게 됐네", 0.05f, Color3B::WHITE);
+					break;
+				case 18:
+					NickName->setString("앨리스");
+					Alice->runAction(FadeTo::create(0.5f, 255));
+					rabbit2->runAction(FadeTo::create(0.5f, 0));
+					LabelTypingEffect::typeMessage(story, "토끼야 잠깐만 기다려!", 0.05f, Color3B::WHITE);
+					break;
+				case 19:
+					isStart = true;
+					scheduleUpdate();
+					C_1->setVisible(true);
+					_script->setVisible(false);
+					this->schedule(schedule_selector(HelloWorld::MoveCake_Stick), 1.0f / 60.0f);
+					break;
+					/*	case 5:
+					LabelTypingEffect::typeMessage(story, "", 0.1f, Color3B::WHITE);
+					break;*/
+				default:
+					break;
+				}
+			}
+		}
+		ing_Messege += 1;
+	}
 	if (stop_BackGround->isVisible())
 	{
 		resume->setTexture(Director::getInstance()->getTextureCache()->addImage("Texture/Object/UI/resume.png"));
@@ -367,128 +502,5 @@ void HelloWorld::onTouchEnded(Touch* touch, Event* _event)
 			Director::getInstance()->replaceScene(TransitionFadeBL::create(0.5f, New::NewScene()));
 		}
 	}
-	if (Skip->getBoundingBox().containsPoint(touch->getLocation()))
-	{
-		isStart = true;
-		scheduleUpdate();
-		C_1->setVisible(true);
-		_script->setVisible(false);
-		this->schedule(schedule_selector(HelloWorld::MoveCake_Stick), 1.0f / 60.0f);
-	}
-	if (isStart == false)
-	{
-		switch (Stage)
-		{
-		case 1:
-			switch (ing_Messege)
-			{
-			case 1:
-				story->setPosition(620, 360);
-				//		story->setScale(1.5f);
-				story->setZOrder(14.0f);
-				NickName->setString("앨리스");
-				LabelTypingEffect::typeMessage(story, "따스한 햇볕이 내리는 오후 앨리스는 집에서 동화책을 읽고 있다. ", 0.05f, Color3B::WHITE);
-				break;
-			case 2:
-				story->setPosition(720, 80);
-				story->setZOrder(11.0f);
-				_script_BackGround2->runAction(FadeOut::create(1.0f));
-				LabelTypingEffect::typeMessage(story, "(똑 똑 똑)", 0.2f, Color3B::BLACK);
-				break;
-			case 3:
-				Alice->runAction(FadeIn::create(0.5f));
-				LabelTypingEffect::typeMessage(story, "어? 누가 왔나 보네.", 0.1f, Color3B::WHITE);
-				break;
-			case 4:
-				Alice->setOpacity(127);
-				LabelTypingEffect::typeMessage(story, "(끼익)", 0.2f, Color3B::BLACK);
-				break;
-			case 5:
-				_script_BackGround3->runAction(FadeOut::create(1.0f));
-				Alice->runAction(FadeIn::create(0.5f));
-				LabelTypingEffect::typeMessage(story, "뭐야? 아무도 없잖아!", 0.2f, Color3B::WHITE);
-				break;
-			case 6:
-				Alice->runAction(FadeTo::create(0.5f, 127));
-				rabbit->runAction(FadeIn::create(1.0f));
-				LabelTypingEffect::typeMessage(story, "신기하게 생긴 토끼가 지나간다", 0.05f, Color3B::BLACK);
-				break;
-			case 7:
-				rabbit->runAction(FadeTo::create(0.5f, 127));
-				Alice->runAction(FadeIn::create(1.0f));
-				LabelTypingEffect::typeMessage(story, "저 토끼 신기하다! 따라가 봐야지~ ", 0.1f, Color3B::WHITE);
-				break;
-			case 8:
-				Alice->runAction(FadeTo::create(0.5f, 127));
-				rabbit->runAction(FadeOut::create(1.0f));
-				LabelTypingEffect::typeMessage(story, "토끼는 계속 도망치다가 나무 안에 있는 토끼굴속으로 들어갔다.", 0.05f, Color3B::BLACK);
-				break;
-			case 9:
-				Alice->runAction(FadeTo::create(0.5f, 255));
-				LabelTypingEffect::typeMessage(story, "나무 속으로 도망가버렸네, 어떡하지?", 0.05f, Color3B::WHITE);
-				break;
-			case 10:
-				LabelTypingEffect::typeMessage(story, "몰라 나도 들어가자!", 0.05f, Color3B::WHITE);
-				break;
-			case 11:
-				_script_BackGround1->runAction(FadeOut::create(1.0f));
-				_script_BackGround2->runAction(Sequence::create(FadeIn::create(1.0f), FadeOut::create(1.0f), NULL));
-				script_BackGround->setVisible(false);
-				LabelTypingEffect::typeMessage(story, ".", 0.05f, Color3B::WHITE);
-				break;
-			case 12:
-				LabelTypingEffect::typeMessage(story, "음....여긴어디지? 분명 나무속으로 들어온거 같은데?", 0.05f, Color3B::WHITE);
-				break;
-			case 13:
-				NickName->setString("토끼");
-				Alice->runAction(FadeTo::create(0.5f, 127));
-				rabbit2->runAction(FadeTo::create(0.5f, 255));
-				LabelTypingEffect::typeMessage(story, "여긴 \"이상한 나라\"라는 곳이야", 0.05f, Color3B::WHITE);
-				break;
-			case 14:
-				NickName->setString("앨리스");
-				Alice->runAction(FadeTo::create(0.5f, 255));
-				rabbit2->runAction(FadeTo::create(0.5f, 127));
-				LabelTypingEffect::typeMessage(story, "뭐야 토끼가 말을 하네?", 0.05f, Color3B::WHITE);
-				break;
-			case 15:
-				NickName->setString("토끼");
-				Alice->runAction(FadeTo::create(0.5f, 127));
-				rabbit2->runAction(FadeTo::create(0.5f, 255));
-				LabelTypingEffect::typeMessage(story, "내가 말했잖아 여긴 이상한 나라라고 너희 세상에서는 상상할 수 없는 것 들이 수없이 많을껄?", 0.05f, Color3B::WHITE);
-				break;
-			case 16:
-				NickName->setString("앨리스");
-				Alice->runAction(FadeTo::create(0.5f, 255));
-				rabbit2->runAction(FadeTo::create(0.5f, 127));
-				LabelTypingEffect::typeMessage(story, "진짜 이상한 곳이네. 토끼야 여기서 나가려면 어떻게 해야 되?", 0.05f, Color3B::WHITE);
-				break;
-			case 17:
-				NickName->setString("토끼");
-				Alice->runAction(FadeTo::create(0.5f, 127));
-				rabbit2->runAction(FadeTo::create(0.5f, 255));
-				LabelTypingEffect::typeMessage(story, "어? 벌써 시간이 이렇게 됐네", 0.05f, Color3B::WHITE);
-				break;
-			case 18:
-				NickName->setString("앨리스");
-				Alice->runAction(FadeTo::create(0.5f, 255));
-				rabbit2->runAction(FadeTo::create(0.5f, 0));
-				LabelTypingEffect::typeMessage(story, "토끼야 잠깐만 기다려!", 0.05f, Color3B::WHITE);
-				break;
-			case 19:
-				isStart = true;
-				scheduleUpdate();
-				C_1->setVisible(true);
-				_script->setVisible(false);
-				this->schedule(schedule_selector(HelloWorld::MoveCake_Stick), 1.0f / 60.0f);
-				break;
-				/*	case 5:
-				LabelTypingEffect::typeMessage(story, "", 0.1f, Color3B::WHITE);
-				break;*/
-			default:
-				break;
-			}
-		}
-	}
-	ing_Messege += 1;
+	
 }

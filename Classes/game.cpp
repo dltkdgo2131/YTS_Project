@@ -844,12 +844,14 @@ void New::ScreenMove(int Num)
 	if (point::get()->ScreenX < 0&&Num==1)
 	{
 		Screen += Num;
+		point::get()->Chapter = Screen;
 		point::get()->ScreenX += 1280 * Num;
 		AllCp->runAction(MoveBy::create(0.1, Vec2(1280 * Num, 0)));
 	}
 	else if(point::get()->ScreenX > -3840 && Num == -1)
 	{
 		Screen += Num;
+		point::get()->Chapter = Screen;
 		point::get()->ScreenX += 1280 * Num;
 		AllCp->runAction(MoveBy::create(0.1, Vec2(1280 * Num, 0)));
 	}

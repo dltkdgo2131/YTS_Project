@@ -142,6 +142,8 @@ void Loading::update(float dt)
 	{
 		this->setTouchEnabled(true);
 		this->setTouchMode(Touch::DispatchMode::ONE_BY_ONE);
+		Scene* pScene = TransitionFade::create(2.0f, HelloWorld::createScene());
+		Director::getInstance()->replaceScene(pScene);
 	}
 }
 
@@ -151,8 +153,8 @@ bool Loading::onTouchBegan(Touch* touch, Event* _event)
 	Vec2 location = Vec2(touch->getLocation().x, touch->getLocation().y);
 	CCLOG("%f %f", location.x, location.y);
 
-	Scene* pScene = TransitionFade::create(2.0f, HelloWorld::createScene());
-	Director::getInstance()->replaceScene(pScene);
+//	Scene* pScene = TransitionFade::create(2.0f, HelloWorld::createScene());
+//	Director::getInstance()->replaceScene(pScene);
 
 	return true;
 }

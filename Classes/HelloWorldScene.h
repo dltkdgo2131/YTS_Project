@@ -55,10 +55,18 @@ public:
 	bool isFast;
 
 	///backGround////////////
+	void BackGround_Setting();
+	void setBackGround();
 	int Chapter;
 	int Stage;
-	Sprite* backGround1;
+	Sprite* backGround1; // 배경 반복
 	Sprite* backGround2;
+	
+	Node* chapter2_Bush; // 챕터 2
+	Sprite* bush[4];
+	Sprite* rose;
+	Sprite* tree[2];
+	Sprite* Cloud;
 	/// Sprite //////////////
 
 	Sprite* cake[2000];
@@ -150,7 +158,6 @@ public:
 	bool LocalToWorldPosition(Node* pSender, Point point);
 	/// Init //////////////////////
 	void setCamera();
-	void setBackGround();
 	void setKeyListener();
 	void setCharacter();
 	void setHeart();
@@ -159,8 +166,11 @@ public:
 	void setMath();
 	void setClear();
 	void setScript();
+	void setParticle();
 
 	/// 발판 , 케이크, 장애물 /////
+	ParticleSystemQuad *CakeParticle;
+
 	Animation* Spider_ani;
 	Animate* Spider_anim;
 	Sprite* temps;
@@ -176,6 +186,7 @@ public:
 	bool isAddChildCake[2000];
 	bool isHurdle[2000];
 
+	int removeCake;
 	int case_Bat;
 	int h_Repeat;
 	float Delay_Action[1000];
