@@ -1,5 +1,6 @@
 #include"HelloWorldScene.h"
 #define WIDTH 60
+#define HEIGHT 70
 #define FPS 1.0f / 60.0f
 
 void HelloWorld::MoveCake_Stick(float dt)
@@ -14,13 +15,13 @@ void HelloWorld::MoveCake_Stick(float dt)
 	for (int i = 0; _Stick1[i] != nullptr; i++)
 	{
 		_Stick1[i]->runAction(MoveBy::create(FPS, Vec2(speed / 60, 0)));
-		if (_Stick1[i]->getPositionX() <= 1300 && _Stick1[i]->getPositionX() > -1300)
+		if (_Stick1[i]->getPositionX() <= 1300 && _Stick1[i]->getPositionX() > (-_Stick1[i]->getContentSize().width) + 300)
 		{
 			if (!(_Stick1[i]->isVisible() == true))
 			{
-				StickBody = PhysicsBody::createBox(Size(_Stick1[i]->getContentSize().width,_Stick1[i]->getContentSize().height / 4), PhysicsMaterial(0, 0, 0));
+				StickBody = PhysicsBody::createBox(Size(_Stick1[i]->getContentSize().width,1), PhysicsMaterial(0, 0, 0));
 				StickBody->setGravityEnable(false);
-				StickBody->setCollisionBitmask(200000 + i);
+				StickBody->setCollisionBitmask(200000);
 				StickBody->setContactTestBitmask(true);
 					StickBody->setDynamic(false);
 					StickBody->setPositionOffset(Vec2(0, 100));
@@ -28,11 +29,12 @@ void HelloWorld::MoveCake_Stick(float dt)
 				_Stick1[i]->setVisible(true);
 			}
 		}
-		else if(_Stick1[i]->getPositionX() <= -1300)
-			if (_Stick1[i]->isVisible())
+
+		else if(_Stick1[i]->getPositionX() <= (-_Stick1[i]->getContentSize().width) + 300)
+			if (_Stick1[i]->isVisible() && _Stick1[i]->getTag() == 1)
 			{
 				_Stick1[i]->getPhysicsBody()->removeFromWorld();
-				_Stick1[i]->setVisible(false);
+				_Stick1[i]->setTag(2);
 			}
 	}
 	for (int i = 0 + removeCake; cake[i] != nullptr; i++)
@@ -166,7 +168,7 @@ void HelloWorld::MoveCake_Stick(float dt)
 	if (TeemoTime <= 0.0f)
 	{
 		if (TeemoTime >= -0.1f)
-			Teemo->runAction(FadeOut::create(0.5f));
+			Teemo->runAction(FadeTo::create(0.5f, 0));
 	}
 	else
 		Action_Teemo();
@@ -214,10 +216,11 @@ void HelloWorld::basicCake(int Repeat)
 
 			this->addChild(cake[i], 5);
 		}
+		basicStick(60 * 5);
 		lastCakeArr += 5;
 	}
 }
-void HelloWorld::JumpCake()
+void HelloWorld::JumpCake(int index)
 {
 	int Height = 0;
 	for (int i = lastCakeArr; i < 6 + lastCakeArr; i++)
@@ -241,37 +244,40 @@ void HelloWorld::JumpCake()
 		else if (i > 2 + lastCakeArr) Height--;
 		this->addChild(cake[i], 5);
 	}
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Texture/Object/Hurdle/Chapter1/bat.plist");
-	Hurdle[CountHurdle] = Sprite::createWithSpriteFrameName("bat_1.png");
-	Bat_ani = Animation::create();
-	Bat_ani->setDelayPerUnit(0.1f);
+	switch (index)
+	{
+	case 1:
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Texture/Object/Hurdle/Chapter1/bat.plist");
+		Hurdle[CountHurdle] = Sprite::createWithSpriteFrameName("bat_1.png");
+		Bat_ani = Animation::create();
+		Bat_ani->setDelayPerUnit(0.1f);
 
-	for (int j = 1; j <= 4; j++)
-		Bat_ani->addSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName(StringUtils::format("bat_%d.png", j)));
-	Bat_anim = Animate::create(Bat_ani);
-	Hurdle[CountHurdle]->runAction(RepeatForever::create(Bat_anim));
-	//		Hurdle[i] = Sprite::create("Texture/Object/Hurdle/Chapter1/bat_1.png");
-	Hurdle[CountHurdle]->setScale(1.0f, 1.0f);
-	Hurdle[CountHurdle]->setTag(4);
-	Hurdle[CountHurdle]->setAnchorPoint(Point(0.5f, 0.5f));
-	Hurdle[CountHurdle]->setRotation(-45);
-	Hurdle[CountHurdle]->setPosition(1400 + (WIDTH * (lastCakeArr + 2.2f)), 1200);
-	Hurdle[CountHurdle]->setVisible(false);
-	isHurdle[CountHurdle] = true;
+		for (int j = 1; j <= 4; j++)
+			Bat_ani->addSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName(StringUtils::format("bat_%d.png", j)));
+		Bat_anim = Animate::create(Bat_ani);
+		Hurdle[CountHurdle]->runAction(RepeatForever::create(Bat_anim));
 
-	this->addChild(Hurdle[CountHurdle], 5);
-	//item[CountItem] = Sprite::create("Texture/Object/Item/Slow_Item.png");
-	//item[CountItem]->setScale(0.5f);
-	//item[CountItem]->setPosition(1400 + (WIDTH * (lastCakeArr + 3)), 250);
-	//item[CountItem]->setTag(3);
-	//item[CountItem]->setVisible(false);
-	//isItem[CountItem] = true;
+		Hurdle[CountHurdle]->setScale(1.0f, 1.0f);
+		Hurdle[CountHurdle]->setTag(4);
+		Hurdle[CountHurdle]->setAnchorPoint(Point(0.5f, 0.5f));
+		Hurdle[CountHurdle]->setRotation(-45);
+		Hurdle[CountHurdle]->setPosition(1400 + (WIDTH * (lastCakeArr + 2.2f)), 1200);
+		Hurdle[CountHurdle]->setVisible(false);
+		isHurdle[CountHurdle] = true;
 
-	//this->addChild(item[CountItem]);
-	CountHurdle += 1;
+		this->addChild(Hurdle[CountHurdle], 5);
+		CountHurdle += 1;
+		basicStick(60 * 6);
+		break;
+	case 2:
+		basicStick(60);
+		basicStick(100, 260);
+		break;
+	}
+
 	lastCakeArr += 6;
 }
-void HelloWorld::JumpTwoCake() {
+void HelloWorld::JumpTwoCake(int index) {
 	int Height = 0;
 	for (int i = lastCakeArr; i < 10 + lastCakeArr; i++)
 	{
@@ -297,50 +303,95 @@ void HelloWorld::JumpTwoCake() {
 
 		this->addChild(cake[i], 5);
 	}
-	//_Stick1[lastStickArr] = Sprite::create("Texture/Object/Stick");
-	//_Stick1[lastStickArr]->setAnchorPoint(Point(0.5f, 0.5f));
-	//_Stick1[lastStickArr]->setPosition((1600 * lastCakeArr), 0);
-	//_Stick1[lastStickArr]->setScale(1.0f, 1.2f);
-	//_Stick1[lastStickArr]->setVisible(false);
-	//this->addChild(_Stick1[lastCakeArr]);
 
-	Hurdle[CountHurdle] = Sprite::create("Texture/Object/Hurdle/Chapter1/Table_Chair.png");
-	Hurdle[CountHurdle]->setPosition(1450 + WIDTH * (lastCakeArr + 4) - 30, 300);
-	Hurdle[CountHurdle]->setScale(1.0f, 1.0f);
-	Hurdle[CountHurdle]->setTag(1);
-	Hurdle[CountHurdle]->setVisible(false);
-	Hurdle[CountHurdle]->setAnchorPoint(Point(0.5, 0.5));
-	//Hurdle[CountHurdle]->getBoundingBox().setRect(0, 0, Hurdle[CountHurdle]->getContentSize().width / 2, Hurdle[CountHurdle]->getContentSize().height / 2);
+	
+	switch (index)
+	{
+	case 1:
+		Hurdle[CountHurdle] = Sprite::create("Texture/Object/Hurdle/Chapter1/Table_Chair.png");
+		Hurdle[CountHurdle]->setPosition(1450 + WIDTH * (lastCakeArr + 4) - 30, 300);
+		Hurdle[CountHurdle]->setScale(1.0f, 1.0f);
+		Hurdle[CountHurdle]->setTag(1);
+		Hurdle[CountHurdle]->setVisible(false);
+		Hurdle[CountHurdle]->setAnchorPoint(Point(0.5, 0.5));
+		isHurdle[CountHurdle] = true;
+		this->addChild(Hurdle[CountHurdle]);
+		CountHurdle++;
+		basicStick(60 * 10);
+		break;
+	case 2:
+		basicStick(60);
+		basicStick(120, 480);
+		break;
+	}
 
-	//MyBodyParser::getInstance()->parseJsonFile("Collider/Table_Chair.json");
-	//T_CBody = MyBodyParser::getInstance()->bodyFormJson(Hurdle[CountHurdle], "Table_Chair", PhysicsMaterial(0, 0, 0));
-
-	//T_CBody->setDynamic(false);
-	//T_CBody->setCollisionBitmask(CountHurdle);
-	//T_CBody->setContactTestBitmask(true);
-	//Hurdle[CountHurdle]->setPhysicsBody(T_CBody);
-
-	isHurdle[CountHurdle] = true;
-	this->addChild(Hurdle[CountHurdle]);
-	CountHurdle++;
 	lastCakeArr += 10;
 } 
-void HelloWorld::basicStick()
+//void HelloWorld::basicStick()
+//{
+//	for (int i = 0 + lastStickArr; i < 10 + lastStickArr; i++)
+//	{
+//		switch (Chapter)
+//		{
+//		case 1:
+//			_Stick1[i] = Sprite::create("Texture/Object/Stick/1_Stick.png");
+//			break;
+//		case 2:
+//			_Stick1[i] = Sprite::create("Texture/Object/Stick/2_Stick.png");
+//			break;
+//		}
+//		
+//		_Stick1[i]->setAnchorPoint(Point(0, 0));
+//		_Stick1[i]->setScale(1.0f, 1.2f);
+//		_Stick1[i]->setVisible(false);
+//		_Stick1[i]->setPosition((_Stick1[i]->getContentSize().width * i), 0);
+//
+//		this->addChild(_Stick1[i], 2);
+//		CCLOG("%f", _Stick1[i]->getContentSize().height);
+//	}
+//	lastStickArr += 10;
+//}
+void HelloWorld::basicStick(float width)
 {
-
-	for (int i = 0 + lastStickArr; i < 10 + lastStickArr; i++)
+	switch (Chapter)
 	{
-		_Stick1[i] = Sprite::create("Texture/Object/Stick/1_Stick.png");
-		_Stick1[i]->setAnchorPoint(Point(0, 0));
-		_Stick1[i]->setScale(1.0f, 1.2f);
-		_Stick1[i]->setVisible(false);
-		_Stick1[i]->setPosition((_Stick1[i]->getContentSize().width * i), 0);
-
-		this->addChild(_Stick1[i], 2);
-		CCLOG("%f", _Stick1[i]->getContentSize().height);
+	case 1:
+		_Stick1[lastStickArr] = Sprite::create("Texture/Object/Stick/1_Stick.png");
+		break;
+	case 2:
+		_Stick1[lastStickArr] = Sprite::create("Texture/Object/Stick/2_Stick.png");
+		break;
 	}
-	lastStickArr += 10;
+	_Stick1[lastStickArr]->setAnchorPoint(Point(0, 0));
+	_Stick1[lastStickArr]->setScale(1.0f, 1.2f);
+	_Stick1[lastStickArr]->setVisible(false);
+	_Stick1[lastStickArr]->setTag(1);
+	_Stick1[lastStickArr]->setContentSize(Size(width, _Stick1[lastStickArr]->getContentSize().height));
+	_Stick1[lastStickArr]->setPosition(StickInterval + (lastCakeArr * WIDTH), 0);
 
+	this->addChild(_Stick1[lastStickArr], 2);
+	lastStickArr += 1;
+}
+void HelloWorld::basicStick(float width, float position)
+{
+	switch (Chapter)
+	{
+	case 1:
+		_Stick1[lastStickArr] = Sprite::create("Texture/Object/Stick/1_Stick.png");
+		break;
+	case 2:
+		_Stick1[lastStickArr] = Sprite::create("Texture/Object/Stick/2_Stick.png");
+		break;
+	}
+	_Stick1[lastStickArr]->setAnchorPoint(Point(0, 0));
+	_Stick1[lastStickArr]->setScale(1.0f, 1.2f);
+	_Stick1[lastStickArr]->setVisible(false);
+	_Stick1[lastStickArr]->setTag(1);
+	_Stick1[lastStickArr]->setContentSize(Size(width, _Stick1[lastStickArr]->getContentSize().height));
+	_Stick1[lastStickArr]->setPosition(StickInterval + (lastCakeArr * WIDTH) + position, 0);
+
+	this->addChild(_Stick1[lastStickArr], 2);
+	lastStickArr += 1;
 }
 void HelloWorld::SlideCake()
 {
@@ -374,16 +425,10 @@ void HelloWorld::SlideCake()
 	Hurdle[CountHurdle + 1]->setScaleY(0.85f);
 	Hurdle[CountHurdle + 1]->setAnchorPoint(Point(0.0f, 1.0f));
 	Hurdle[CountHurdle]->addChild(Hurdle[CountHurdle + 1], -1);
-	h_Rect[CountHurdle] = Hurdle[CountHurdle]->getBoundingBox();
-	//MyBodyParser::getInstance()->parseJsonFile("Collider/Spider.json");
-	//SpiderBody = MyBodyParser::getInstance()->bodyFormJson(Hurdle[CountHurdle],"Spider", PhysicsMaterial(0,0,0));
-	//
-	//SpiderBody->setDynamic(false);
-	//SpiderBody->setCollisionBitmask(CountHurdle);
-	//SpiderBody->setContactTestBitmask(true);
-	//Hurdle[CountHurdle]->setPhysicsBody(SpiderBody);
 	isHurdle[CountHurdle] = true;
 	this->addChild(Hurdle[CountHurdle], 5);
+
+	basicStick(60 * 8);
 	CountHurdle += 2;
 	lastCakeArr += 8;
 }
@@ -439,41 +484,36 @@ void HelloWorld::VatCake()
 		}
 		this->addChild(Hurdle[i], 5);
 	}
-	//Hurdle[CountHurdle] = Sprite::create("Texture/Object/Hurdle/Chapter1/bat_1.png");
-	//Hurdle[CountHurdle]->setPosition(1450 + WIDTH * (lastCakeArr + 4) - 30, 300);
-	//Hurdle[CountHurdle]->setScale(1.0f, 1.0f);
-	//Hurdle[CountHurdle]->setTag(3);
-	//Hurdle[CountHurdle]->setVisible(false);
-	//Hurdle[CountHurdle]->setAnchorPoint(Point(0.5, 0.5));
-	//isHurdle[CountHurdle] = true;
-	//this->addChild(Hurdle[CountHurdle]);
+	basicStick(60 * 20);
 	CountHurdle += 7;
 	lastCakeArr += 20;
 
 }
 void HelloWorld::biggerCake()
 {
-
 	for (int i = 0 + lastCakeArr; i < 30 + lastCakeArr; i++)
 	{
-		
-		cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
-		cake[i]->setTag(1);
-		cake[i]->setScale(0.6f);
-		cake[i]->setPosition(1400 + (WIDTH * i), 200);
-		cake[i]->setVisible(false);
-		isCake[i] = true;
-
-		if ((i - lastCakeArr) % 5 == 0)
+		if ((i - lastCakeArr) % 5 != 0 && i - lastCakeArr != 0)
 		{
-			cake[i + 1] = Sprite::create("Texture/Object/Item/Gold_Coin.png");
-			cake[i + 1]->setTag(2);
-			cake[i + 1]->setScale(1.0f);
-			cake[i + 1]->setPosition(100, 200);
-			i += 1;
-			this->addChild(cake[i + 1], 5);
+			cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
+			cake[i]->setTag(1);
+			cake[i]->setScale(0.6f);
+			cake[i]->setPosition(1400 + (WIDTH * i), 200);
+			cake[i]->setVisible(false);
+			isCake[i] = true;
+			this->addChild(cake[i], 5);
 		}
-		this->addChild(cake[i], 5);
+
+		else if ((i - lastCakeArr) % 5 == 0)
+		{
+			cake[i ] = Sprite::create("Texture/Object/Item/Gold_Coin.png");
+			cake[i ]->setTag(2);
+			cake[i ]->setScale(1.0f);
+			cake[i ]->setPosition(1400 + (WIDTH * i), 200);
+			cake[i]->setVisible(false);
+			isCake[i] = true;
+			this->addChild(cake[i], 5);
+		}
 	}
 	for (int i = 0 + CountHurdle; i < 10 + CountHurdle; i += 2)
 	{
@@ -507,6 +547,7 @@ void HelloWorld::biggerCake()
 	item[CountItem]->setVisible(false);
 	isItem[CountItem] = true;
 	this->addChild(item[CountItem], 5);
+	basicStick(60 * 30);
 	CountItem += 1;
 	CountHurdle += 10;
 	lastCakeArr += 30;
@@ -540,6 +581,7 @@ void HelloWorld::TeemoCake()
 			this->addChild(item[(i * 7) + j], 5);
 		}
 	}
+	basicStick(60 * 20);
 	CountItem += 14;
 	lastCakeArr += 20;
 }
@@ -572,7 +614,7 @@ void HelloWorld::FastCake()
 			this->addChild(cake[(j * 20) + i]);
 		}
 	}
-
+	basicStick(60 * 40);
 	/*	break;*/
 	//case 2:
 	//for (int i = 0 + CountHurdle; i < 18 + CountHurdle; i += 2)
@@ -637,7 +679,25 @@ void HelloWorld::FiverCake()
 			else if (i > 2 + lastCakeArr) Height--;
 			this->addChild(cake[i], 5);
 		}
+		basicStick(60);
+		basicStick(100, 260);
 		lastCakeArr += 6;
+	}
+	
+}
+void HelloWorld::ManyCake()
+{
+	for (int i = 0 + lastCakeArr; i < 3 + lastCakeArr; i++)
+	{
+		for (int j = 0; j < 20; j++)
+		{
+			cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
+			cake[i]->setPosition(1400 + (i * WIDTH), 250 + ( j * HEIGHT));
+			cake[i]->setAnchorPoint(Point(0.0f, 0.0f));
+			cake[i]->setVisible(false);
+			this->addChild(cake[i]);
+		}
+		lastCakeArr += 20;
 	}
 }
 void HelloWorld::EatItem()

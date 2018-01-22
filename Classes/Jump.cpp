@@ -7,7 +7,7 @@ void HelloWorld::DoJump()
 {
 	C_animation(2);
 	direction = 1;
-	//isCrush = false;
+	isCrush = false;
 	gravity = jump_Speed;
 	n_JumpCount++;
 }
@@ -16,18 +16,29 @@ void HelloWorld::JumpProcess()
 	switch (direction)
 	{
 	case 0:
-		if (y > y_base)
+	/*	if (y > y_base)
+			y = y_base;*/
+		
+		if (isCrush == false || y <= y_base - 50)
+		{
+			y -= gravity;
+			gravity += jump_accell;
+		}
+		else if (isCrush == true)//&& C_1->getBoundingBox().intersectsCircle(Stick)
+		{
+			n_JumpCount = 0;
 			y = y_base;
+		}
+		
 		if (isJump == true)
 		{
 			isJump = false;
 			if (isSlide == false)
 				C_animation(1);
 		}
-		else if (y == y_base)//&& C_1->getBoundingBox().intersectsCircle(Stick)
-			n_JumpCount = 0;
 		break;
 	case 1:
+		isCrush = false;
 		y += gravity;
 		if (gravity <= 0.0f)
 		{
@@ -40,14 +51,15 @@ void HelloWorld::JumpProcess()
 		break;
 	case 2:
 		y -= gravity;
-		if (y > y_base)
+		//if (y > y_base)
+		//	gravity += jump_accell;
+		if (isCrush == false)
 			gravity += jump_accell;
-		/*if (isCrush == false)
-			gravity += jump_accell;*/
 		else
 		{
+			gravity = 0;
 			direction = 0;
-			y = y_base;
+			//y = y_base;
 		}
 		break;
 	} 

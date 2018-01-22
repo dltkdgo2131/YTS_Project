@@ -16,20 +16,167 @@ void HelloWorld::setCamera()
 }
 void HelloWorld::setBackGround()
 {
-	switch (point::get()->Chapter)
+
+	switch (Chapter)
 	{
 	case 1:
 		backGround1 = Sprite::create("Texture/backGround/Stage1_BackGround.png");
 		backGround2 = Sprite::create("Texture/backGround/Stage1_BackGround.png");
+		break;
 	case 2:
-		chapter2_Bush = Node::create();
-		this->addChild(chapter2_Bush);
-		for(int i = 0; i < 4; i++)
+		for (int i = 0; i < 2; i++)
+		{
+			chapter2_Background = Node::create();
+			this->addChild(chapter2_Background);
 
-		backGround1 = Sprite::create("Texture/backGround/Stage2_BackGround.png");
-		backGround2 = Sprite::create("Texture/backGround/Stage2_BackGround.png");
+			Tree[i] = Node::create();
+			chapter2_Background->addChild(Tree[i]);
 
+			Bush[i] = Node::create();
+			//	chapter2_Bush[i]->setPosition(2560, 0);
+			chapter2_Background->addChild(Bush[i]);
 
+			backGround1 = Sprite::create("Texture/backGround/Chapter2/Chapter2_BackGround.png");
+			backGround2 = Sprite::create("Texture/backGround/Chapter2/Chapter2_BackGround.png");
+			for (int j = 0; j < 4; j++)
+			{
+				if (j < 2)
+				{
+
+					/*			tree[j + (i * 2)] = Sprite::create(StringUtils::format("Texture/backGround/Chapter2/Chapter2_tree%d.png", j+1));
+								if(j % 2 == 0)
+									tree[j + (i * 2)]->setPosition(430, 0);
+								else
+									tree[j + (i * 2)]->setPosition(1500, 0);
+								tree[j + (i * 2)]->setAnchorPoint(Point(0.0f, 0.0f));
+								Tree[i]->addChild(tree[j + (i * 2)],-2);*/
+
+				}
+				if (j % 3 != 0)
+				{
+					bush[j + (i * 4)] = Sprite::create(StringUtils::format("Texture/backGround/Chapter2/Chapter2_Bush%d.png", j + 1));
+					bush[j + (i * 4)]->setAnchorPoint(Point(0.0f, 0.0f));
+					bush[j + (i * 4)]->setPosition(0, -60);
+					Bush[i]->addChild(bush[j + (i * 4)], -3 + j);
+				}
+				else
+				{
+					bush[j + (i * 4)] = Sprite::create(StringUtils::format("Texture/backGround/Chapter2/Chapter2_Bush%d.png", j + 1));
+					bush[j + (i * 4)]->setPosition(0, -60);
+					bush[j + (i * 4)]->setAnchorPoint(Point(0.0f, 0.0f));
+					this->addChild(bush[j + (i * 4)], -3 + j);
+				}
+				switch (j + (i * 4))
+				{
+				case 0:
+					bush[j + (i * 4)]->setPosition(300, -60);
+					//		tree[j + (i * 2)]->setPosition(430, 0);
+					break;
+				case 1:
+					bush[j + (i * 4)]->setPosition(120, -60);
+					//		tree[j + (i * 2)]->setPosition(1500, 0);
+					break;
+				case 2:
+					bush[j + (i * 4)]->setPosition(0, -60);
+					//		tree[j + (i * 2)]->setPosition(2560 + 300, -60);
+					break;
+				case 3:
+					bush[j + (i * 4)]->setPosition(70, -60);
+					//		tree[j + (i * 2)]->setPosition(2560 + 1500, 0);
+					break;
+				case 4:
+					bush[j + (i * 4)]->setPosition(bush[0]->getContentSize().width + 300, -60);
+					break;
+				case 5:
+					bush[j + (i * 4)]->setPosition(120, -60);
+					break;
+				case 6:
+					bush[j + (i * 4)]->setPosition(0, -60);
+					break;
+				case 7:
+					bush[j + (i * 4)]->setPosition(bush[3]->getContentSize().width + 70, -60);
+					break;
+				}
+			}
+			rose[i] = Sprite::create("Texture/backGround/Chapter2/Chapter2_Rose.png");
+			rose[i]->setAnchorPoint(Point(0.0f, 0.0f));
+			rose[i]->setPosition(0, 150);
+			Bush[i]->addChild(rose[i]);
+			cloud[i] = Sprite::create("Texture/backGround/Chapter2/Chapter2_Cloud.png");
+			cloud[i]->setAnchorPoint(Point(0.0f, 0.0f));
+			cloud[i]->setPosition(0, 620);
+			this->addChild(cloud[i], -4);
+			if (i == 1)
+			{
+				rose[i]->setPosition(2560, 0);
+				cloud[i]->setPosition(2560, 0);
+			}
+		}
+		break;
+	case 3:
+		for (int i = 0; i < 2; i++)
+		{
+			Bush[i] = Node::create();
+			this->addChild(bush[i]);
+
+			Tree[i] = Node::create();
+			this->addChild(Tree[i]);
+
+			for (int j = 0; j < 5; j++)
+			{
+				if (j < 3)
+				{
+					tree[j + (i * 3)] = Sprite::create(StringUtils::format("Texture/backGround/Chapter3/Chapter3_Tree%d", j + 1));
+					tree[j + (i * 3)]->setAnchorPoint(Point(0.0f, 0.0f));
+					tree[j + (i * 3)]->setPosition(0, 30);
+					Tree[i]->addChild(tree[j + (i * 3)]);
+				}
+				bush[j + (i * 5)] = Sprite::create(StringUtils::format("Texture/backGround/Chapter3/Chapter3_Bush%d", j + 1));
+				bush[j + (i * 5)]->setAnchorPoint(Point(0.0f, 0.0f));
+				bush[j + (i * 5)]->setPosition(0, -30);
+				Bush[i]->addChild(bush[j + (i * 5)]);
+				switch (j + (i * 5) + 1)
+				{
+				case 1:
+					bush[j + (i * 5)]->setGlobalZOrder(-9);
+					tree[j + (i * 5)]->setGlobalZOrder(-1);
+					break;
+				case 2:
+					bush[j + (i * 5)]->setGlobalZOrder(-6);
+					tree[j + (i * 5)]->setGlobalZOrder(-2);
+
+					break;
+				case 3:
+					bush[j + (i * 5)]->setGlobalZOrder(-4);
+					bush[j + (i * 5)]->setPosition(300, 0);
+					tree[j + (i * 5)]->setGlobalZOrder(-5);
+					break;
+				case 4:
+					bush[j + (i * 5)]->setGlobalZOrder(3);
+					break;
+				case 5:
+					bush[j + (i * 5)]->setGlobalZOrder(0);
+					break;
+				case 6:
+
+					break;
+				case 7:
+					break;
+				case 8:
+					break;
+				case 9:
+					break;
+				case 10:
+					break;
+				default:
+					break;
+				}
+			}
+			dungcol[i] = Sprite::create("Texture/backGround/Chapter3/Chapter3_dungcol");
+			dungcol[i]->setAnchorPoint(Point(0.0f, 1.0f));
+			dungcol[i]->setPosition(0, 0);
+			this->addChild(dungcol[i]);
+		}
 	default:
 		break;
 	}
@@ -38,8 +185,10 @@ void HelloWorld::setBackGround()
 	backGround2->setAnchorPoint(Point(0, 0));
 	backGround1->setPosition(0, 0);
 	backGround2->setPosition(backGround1->getContentSize().width, 0);
-	this->addChild(backGround1);
-	this->addChild(backGround2);
+	//backGround1->setVisible(false);
+	//backGround2->setVisible(false);
+	this->addChild(backGround1, -10);
+	this->addChild(backGround2, -10);
 }
 void HelloWorld::setKeyListener()
 {
@@ -93,13 +242,12 @@ void HelloWorld::setHeart()
 }
 void HelloWorld::setUI()
 {
-
-
 	m_label = 1;
 	time_label = 0.2f;
 
 	i_Collecting_Coin = 0;
 	Collecting_Coin = Label::create("", "fonts/NanumBarun/NanumBarun.ttf", 24);
+	//	Collecting_Coin = Label::createWithCharMap("fonts/number.png", 50, 50, 48);
 	Collecting_Coin->setPosition(83, 475);
 	this->addChild(Collecting_Coin, 5);
 
@@ -163,34 +311,42 @@ void HelloWorld::setMath()
 		direc[i] = 1;
 		bat_Direc[i] = 1;
 	}
+	removeCake = 0; // »èÁ¦µÈ ÄÉÀÌÅ©
+
+	gravity = 0;
+
+	isPause = false; // ¸ØÃã
+
 	sub_Condition = 1;
 	opacity_time = 0.3f;
 	speed = -600.0f;
 	Stage = 1;
-	Chapter = 2;
+	//	if (point::get()->Chapter == NULL)
+	Chapter = point::get()->Chapter;
+	if (Chapter < 0)
+		Chapter = 1;
+	//	else\
+			Chapter = 2;
 	CountHurdle += 0;
+
+	beCrush = 0;
+	afCrush = 0;
 	isCrush = false;
 	isStart = false;
 	ing_Messege = 1;
-	removeCake = 0;
-
+	
+	TeemoTime = -0.5f;
+	iStar = 3;
+	//	if (point::get()->StageNum == NULL)
 	Stage = point::get()->StageNum;
+	if (Stage < 0)
+		Stage = 1;
+	//	else\
+			Stage = 1;
+		//Stage = point::get()->StageNum;
 }
 void HelloWorld::setAnimation()
 {
-}
-void HelloWorld::setClear()
-{
-	_clear = Sprite::create("Texture/Object/Hurdle/Chapter1/Table_Chair.png");
-	_clear->setPosition(1000, 150);
-	_clear->setAnchorPoint(Point(0.0f, 0.0f));
-	_clear->setScaleY(2.0f);
-	this->addChild(_clear, 12);
-	ClearBody = PhysicsBody::createBox(Size(_clear->getContentSize().width / 2, _clear->getContentSize().height), PhysicsMaterial(0, 0, 0), Vec2(100, 0));
-	ClearBody->setDynamic(false);
-	ClearBody->setCollisionBitmask(100000);
-	ClearBody->setContactTestBitmask(true);
-	_clear->setPhysicsBody(ClearBody);
 }
 void HelloWorld::setItem()
 {
@@ -218,34 +374,39 @@ void HelloWorld::setScript()
 	_script = Node::create();
 	this->addChild(_script, 9);
 
-	switch (Stage)
+	switch (Chapter)
 	{
 	case 1:
-		_script_BackGround1 = Sprite::create("Texture/backGround/Stage2_BackGround.png");
-		_script_BackGround1->setPosition(0, 0);
-		_script_BackGround1->setAnchorPoint(Point(0, 0));
-		_script->addChild(_script_BackGround1);
-
-		_script_BackGround2 = Sprite::create("Texture/Object/UI/backGround.png");
-		_script_BackGround2->setPosition(0, 0);
-		_script_BackGround2->setAnchorPoint(Point(0, 0));
-		_script->addChild(_script_BackGround2, 13);
-
-		_script_BackGround3 = Sprite::create("Texture/backGround/Stage1_BackGround.png");
-		_script_BackGround3->setPosition(0, 0);
-		_script_BackGround3->setAnchorPoint(Point(0, 0));
-		_script->addChild(_script_BackGround3, 1);
-		
 		break;
-	default:
-		break;
+		switch (Stage)
+		{
+		case 1:
+			_script_BackGround1 = Sprite::create("Texture/backGround/Stage2_BackGround.png");
+			_script_BackGround1->setPosition(0, 0);
+			_script_BackGround1->setAnchorPoint(Point(0, 0));
+			_script->addChild(_script_BackGround1);
+
+			_script_BackGround2 = Sprite::create("Texture/Object/UI/backGround.png");
+			_script_BackGround2->setPosition(0, 0);
+			_script_BackGround2->setAnchorPoint(Point(0, 0));
+			_script->addChild(_script_BackGround2, 13);
+
+			_script_BackGround3 = Sprite::create("Texture/backGround/Stage1_BackGround.png");
+			_script_BackGround3->setPosition(0, 0);
+			_script_BackGround3->setAnchorPoint(Point(0, 0));
+			_script->addChild(_script_BackGround3, 1);
+
+			break;
+		default:
+			break;
+		}
 	}
 
-	
+
 	story = Label::create("", "fonts/ChocoCookie.ttf", 48, Size(700, 200), TextHAlignment::LEFT);
 	story->setPosition(500, 200);
 	story->setColor(Color3B::RED);
-	_script->addChild(story,11);
+	_script->addChild(story, 11);
 
 	script_BackGround = Sprite::create("Texture/Object/UI/backGround.png");
 	script_BackGround->setPosition(0, 0);
@@ -253,7 +414,7 @@ void HelloWorld::setScript()
 	script_BackGround->setAnchorPoint(Point(0, 0));
 	_script->addChild(script_BackGround, 8);
 
-	Alice = Sprite::create(StringUtils::format("Texture/Character/%d.png",point::get()->ilust_num));
+	Alice = Sprite::create(StringUtils::format("Texture/Character/%d.png", point::get()->ilust_num));
 	Alice->setOpacity(0);
 	Alice->setPosition(180, 300);
 	Alice->setAnchorPoint(Point(0.5f, 0.5f));
@@ -309,4 +470,118 @@ void HelloWorld::setParticle()
 	//CakeParticle->setPosition(Point(100, 100));
 	//CakeParticle->setSpeed(100);
 	//CakeParticle->setScale(1.0f);
+}
+void HelloWorld::setClear()
+{
+
+	_clear = Sprite::create("Texture/Object/Hurdle/Chapter1/Table_Chair.png");
+	_clear->setPosition(1000, 150);
+	_clear->setAnchorPoint(Point(0.0f, 0.0f));
+	_clear->setScaleY(2.0f);
+	this->addChild(_clear, 12);
+	ClearBody = PhysicsBody::createBox(Size(_clear->getContentSize().width / 2, _clear->getContentSize().height), PhysicsMaterial(0, 0, 0), Vec2(100, 0));
+	ClearBody->setDynamic(false);
+	ClearBody->setCollisionBitmask(100000);
+	ClearBody->setContactTestBitmask(true);
+	_clear->setPhysicsBody(ClearBody);
+
+	_Clear = Node::create();
+	_Clear->setGlobalZOrder(13);
+	_Clear->setVisible(false);
+	this->addChild(_Clear, 13);
+
+	black_Background = Sprite::create("Texture/Object/UI/backGround.png");
+	black_Background->setAnchorPoint(Point(0.f, 0.f));
+	black_Background->setPosition(0, 0);
+	black_Background->setOpacity(127);
+	_Clear->addChild(black_Background);
+
+
+}
+void HelloWorld::crushClear()
+{
+	//if (NowHeart < 3)
+	//	iStar -= 1;
+	//switch (point::get()->StageNum)
+	//{
+	//case 1:
+	//	if (i_Collecting_Cake < 700)
+	//		iStar -= 2;
+	//	else if (i_Collecting_Cake < 900)
+	//		iStar -= 1;
+	//	break;
+	//case 2:
+	//	break;
+	//}
+	home = MenuItemImage::create("Texture/Object/UI/home.png",
+		"Texture/Object/UI/p_home.png",
+		CC_CALLBACK_1(HelloWorld::goHome, this));
+	home->setAnchorPoint(Point(0.5f, 0.5f));
+	home->setPosition(0, 0);
+
+	Next = MenuItemImage::create("Texture/Object/UI/Next.png",
+		"Texture/Object/UI/p_Next.png",
+		CC_CALLBACK_1(HelloWorld::goNext, this));
+	Next->setAnchorPoint(Point(0.5f, 0.5f));
+	Next->setPosition(0, 0);
+
+	//back = MenuItemImage::create("Texture/Object/UI/back.png", "Texture/Object/UI/p_back.png", CC_CALLBACK_1(HelloWorld::goBack, this));
+	//back->setAnchorPoint(Point(0.5f, 0.5f));
+	//back->setPosition(535, 160);
+	//_Clear->addChild(back, 1);
+
+	ClearMenu = Menu::create(home, Next, NULL);
+	ClearMenu->setPosition(640, 150);
+	ClearMenu->alignItemsHorizontallyWithPadding(100);
+	ClearMenu->setAnchorPoint(Point(0.5f, 0.5f));
+	_Clear->addChild(ClearMenu, 1);
+
+	_Clear->setVisible(true);
+
+
+	if (iStar <= 0)
+	{
+		back_Clear = Sprite::create("Texture/Object/Clear/Fail.png");
+		back_Clear->setAnchorPoint(Point(0.5f, 0.5f));
+		back_Clear->setPosition(635, 625);
+		_Clear->addChild(back_Clear,1);
+		clear_Background = Sprite::create("Texture/Object/Clear/BG2.png");
+		clear_Background->setAnchorPoint(Point(0.5f, 0.5f));
+		clear_Background->setPosition(640, 360);
+		_Clear->addChild(clear_Background);
+	}
+	else if (iStar > 0)
+	{
+		clear_Background = Sprite::create("Texture/Object/Clear/BG1.png");
+		clear_Background->setAnchorPoint(Point(0.5f, 0.5f));
+		clear_Background->setPosition(640, 360);
+		_Clear->addChild(clear_Background);
+	}
+
+	star_tle = Sprite::create("Texture/Object/Clear/Star_tle.png");
+	star_tle->setAnchorPoint(Point(0.5f, 0.5f));
+	star_tle->setPosition(635, 485);
+	_Clear->addChild(star_tle);
+
+	for (int i = 0; i < iStar; i++)
+	{
+		star[i] = Sprite::create(StringUtils::format("Texture/Object/clear/star%d.png", i + 1));
+		star[i]->setPosition(540 + (90 * i), 500);
+		star[i]->setScale(0.0f);
+		star[i]->setOpacity(0);
+		star_tle->addChild(star[i],1);
+
+		star[i]->runAction(Spawn::create(ScaleTo::create(0.5f + (i * 0.5f), 1.0f), FadeTo::create(0.5f + (i * 0.5f), 255), NULL));
+	}
+
+	// label
+	//clearTerm = Label::create(StringUtils::format("%d / %d", i_Collecting_Cake, Max_Collecting_Cake), "fonts/ChocoCookie.ttf", 24);
+	clearTerm = Label::createWithCharMap("fonts/Number.png", 49, 45, 48);
+	clearTerm->setScale(0.6f);
+//	clearTerm->setString(StringUtils::format("%d ¡¡%d", i_Collecting_Cake, Max_Collecting_Cake));
+	clearTerm->setString("0 0");
+	clearTerm->setPosition(640, 325);
+	_Clear->addChild(clearTerm);
+
+
 }

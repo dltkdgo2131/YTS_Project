@@ -164,7 +164,7 @@ bool Shop::onTouchBegan(Touch* touch, Event*_event)
 				item1->setTexture(Director::getInstance()->getTextureCache()->addImage("Shop/buy_p.png"));
 				bisclick = true;
 				Sex = 1;
-			}
+	}
 			if (item2->getBoundingBox().containsPoint(touch->getLocation()))
 			{
 				item2->setTexture(Director::getInstance()->getTextureCache()->addImage("Shop/buy_p.png"));

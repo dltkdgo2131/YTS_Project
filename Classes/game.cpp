@@ -104,9 +104,6 @@ bool New::init()
 	menu2->setPosition(Vec2(0, 0));
 	All->addChild(menu2, 5);
 
-	
-
-
 	CCLOG("num ss%d", point::get()->ilust_num);
 	Alice1 = Sprite::create(StringUtils::format("Iven/Rust/%d.png",point::get()->ilust_num));
 	Alice1->setPosition(Vec2(280, 350));
@@ -336,7 +333,7 @@ bool New::init()
 	OptionAll->setVisible(false);
 	//////
 
-
+	CheckScreen();
 
 	for (int i = 0; i < 2; i++)
 	{
@@ -837,21 +834,36 @@ void New::DressOn()
 	
 }
 
-
+void New::CheckScreen()
+{
+	if (Screen == 1)
+		point::get()->Chapter = Screen;
+	else if (Screen == 0)
+		point::get()->Chapter = Screen + 2;
+	else if (Screen == -1)
+		point::get()->Chapter = Screen + 4;
+	else if (Screen == -2)
+		point::get()->Chapter = Screen + 6;
+}
 
 void New::ScreenMove(int Num)
 {
 	if (point::get()->ScreenX < 0&&Num==1)
 	{
 		Screen += Num;
-		point::get()->Chapter = Screen;
+		CheckScreen();
 		point::get()->ScreenX += 1280 * Num;
 		AllCp->runAction(MoveBy::create(0.1, Vec2(1280 * Num, 0)));
 	}
 	else if(point::get()->ScreenX > -3840 && Num == -1)
 	{
 		Screen += Num;
-		point::get()->Chapter = Screen;
+		if(Screen == 0)
+			point::get()->Chapter = Screen + 2;
+		else if (Screen == -1)
+			point::get()->Chapter = Screen + 3;
+		else if (Screen == -2)
+			point::get()->Chapter = Screen + 4;
 		point::get()->ScreenX += 1280 * Num;
 		AllCp->runAction(MoveBy::create(0.1, Vec2(1280 * Num, 0)));
 	}

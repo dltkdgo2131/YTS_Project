@@ -22,6 +22,7 @@ public:
 	void ScreenMove(int Num);
 	void BtEnded();
 	void StageMove();
+	void CheckScreen();
 	Sprite *Closet;
 	Sprite * Shop;
 	Sprite * Alice1;

@@ -9,22 +9,189 @@ void HelloWorld::chapte1_S1()
 	srand(time(NULL));
 	int counting = 0;
 
-	for (int i = 0; i < 1; i++)
+	//for (int i = 0; i < 1; i++)
+	//{
+	//	basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick();
+	//}//	SlideCake();
+	basicStick(1400);
+	StickInterval += 1400;
+	switch (Chapter)
 	{
-		basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick(); basicStick();
-	}//	SlideCake();
-	
-	biggerCake();
-	basicCake(2);
-	JumpCake();
-	JumpTwoCake();
-	basicCake(1);
+	case 1:
+		i_Collecting_Cake = 0;
+		Max_Collecting_Cake = 700;
+		switch (Stage)
+		{
+		case 1:
+			
+			basicCake(1);
+			basicCake(1);
+			basicCake(1);
+			JumpCake(1);
+			JumpCake(2);
+			JumpCake(1);
+			JumpTwoCake(1);
+			JumpTwoCake(2);
+			JumpTwoCake(1);
+			TeemoCake();
+			FiverCake();
+			SlideCake();
+			SlideCake();
+			VatCake();
+			VatCake();
+			biggerCake();
+			JumpTwoCake(2);
+			basicCake(1);
+			JumpCake(1);
+			JumpCake(2);
+			SlideCake();
+			JumpCake(2);
+			JumpCake(1);
+			JumpTwoCake(1);
+			JumpTwoCake(2);
+			JumpTwoCake(1);
+			TeemoCake();
+			basicCake(1);
+			basicCake(1);
+			basicCake(1);
+			JumpCake(1);
+			JumpCake(2);
+			JumpCake(1);
+			JumpTwoCake(1);
+			JumpTwoCake(2);
+			JumpTwoCake(1);
+			TeemoCake();
+			FiverCake();
+			SlideCake();
+			SlideCake();
+			VatCake();
+			VatCake();
+			biggerCake();
+			JumpTwoCake(2);
+			basicCake(1);
+			JumpCake(1);
+			JumpTwoCake(1);
+			JumpTwoCake(2);
+			JumpTwoCake(1);
+			TeemoCake();
+			basicCake(1);
+			basicCake(1);
+			basicCake(1);
+			JumpCake(1);
+			JumpCake(2);
+			JumpCake(1);
+			JumpTwoCake(1);
+			JumpTwoCake(2);
+			CCLOG("LastCake : %d", lastCakeArr);
+			//TeemoCake();
+			//SlideCake();
+			//FiverCake();
+			//basicCake(2);
+			//JumpCake();
+			//VatCake();
+			//JumpTwoCake();
+			//basicCake(1);
+			//FastCake();
+			////biggerCake();
+			//JumpCake();
+			//JumpCake();
+			//JumpTwoCake();
+			//JumpTwoCake();
+			//SlideCake();
+			//SlideCake();
+			//FiverCake();
+			//basicCake(2);
+			//JumpCake();
+			//biggerCake();
+			////biggerCake();
+			//JumpCake();
+			//JumpCake();
+			//JumpTwoCake();
+			//JumpTwoCake();
+			//SlideCake();
+			//SlideCake();
+			//FiverCake();
+			//basicCake(2);
+			//JumpCake();
+			//biggerCake();
+			//VatCake();
+			break;
+		case 2:
+			//TeemoCake();
+			//JumpTwoCake();
+			//JumpTwoCake();
+			//SlideCake();
+			//SlideCake();
+			//FiverCake();
+			//basicCake(2);
+			//JumpCake();
+			//biggerCake();
+			//TeemoCake();
+			//SlideCake();
+			//FiverCake();
+			//basicCake(2);
+			//JumpCake();
+			//VatCake();
+			//JumpTwoCake();
+			//basicCake(1);
+			//FastCake();
+			////biggerCake();
+			//JumpCake();
+			//JumpCake();
+			//JumpTwoCake();
+			//JumpTwoCake();
+			//SlideCake();
+			//SlideCake();
+			//FiverCake();
+			//basicCake(2);
+			//JumpCake();
+			//biggerCake();
+			break;
+		case 3:
+			//TeemoCake();
+			//SlideCake();
+			//FiverCake();
+			//basicCake(2);
+			//JumpCake();
+			//VatCake();
+			//JumpTwoCake();
+			//basicCake(1);
+			//FastCake();
+			////biggerCake();
+			//JumpCake();
+			//JumpCake();
+			//JumpTwoCake();
+			//JumpTwoCake();
+			//SlideCake();
+			//SlideCake();
+			//FiverCake();
+			//basicCake(2);
+			//JumpCake();
+			//biggerCake();
+			////biggerCake();
+			//JumpCake();
+			//JumpCake();
+			//JumpTwoCake();
+			//JumpTwoCake();
+			//SlideCake();
+			//SlideCake();
+			//FiverCake();
+			//basicCake(2);
+			//JumpCake();
+			//biggerCake();
+			//VatCake();
+			break;
 
-	JumpCake();
-	JumpCake();
-	JumpTwoCake();
-	JumpTwoCake();
-	SlideCake();
+		case 4:
+			break;
+
+		}
+
+	case 3:
+		break;
+	case 4:
+		break;
+	}
 
 	//for (int i = 0; i < 500; i++)
 	//{
@@ -98,6 +265,7 @@ void HelloWorld::chapte1_S1()
 		//jumptwocake();
 	//}
 	_clear->setPosition(1400 + (60 * lastCakeArr), _clear->getPositionY());
+	basicStick(1300);
 	//biggerCake(); 
 	//	JumpTwoCake(); basicCake(2);
 	//	JumpTwoCake(); JumpTwoCake(); JumpTwoCake(); JumpTwoCake(); 

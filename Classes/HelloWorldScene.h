@@ -37,9 +37,10 @@ public:
 	/// Score ///////////////
 	Label * Collecting_Cake;
 	Label * Collecting_Coin;
-	int i_Collecting_Cake = 0;
-	int Max_Collecting_Cake = 800;
-	int i_Collecting_Coin;
+	float tempCake;
+	float i_Collecting_Cake = 0;
+	int Max_Collecting_Cake = 700;
+	float i_Collecting_Coin;
 
 	/// Vector //////////////
 	Vec2 C_location;// 플레이어 좌표
@@ -50,9 +51,40 @@ public:
 	bool bIsDown = false;
 	bool isJump = false;
 	bool isSlide = false;
-	bool isCrush;
 	bool isBigger;
 	bool isFast;
+	bool isPause;
+
+	bool isCrush;
+	bool isCrushCake;
+	bool isCrushHurdle;
+	bool isCrushItem;
+	int beCrush;
+	int afCrush;
+
+	///clear //////
+	/// 종료시 팝업 ///////////
+	Node* _Clear;
+
+	Sprite* _clear;
+	Sprite* clear_Background;
+	Sprite* black_Background;
+	Label* goal;
+
+	Label* clearTerm;
+
+	Sprite *back_Clear;
+	Sprite *star_tle;
+	Sprite *star[3];
+	Menu* ClearMenu;
+	MenuItemImage *home;
+	MenuItemImage *Next;
+	MenuItemImage *back;
+	void goHome(Object* pSender);
+	void goNext(Object* pSender);
+	void goBack(Object* pSender);
+	int iStar;
+	bool isClear;
 
 	///backGround////////////
 	void BackGround_Setting();
@@ -62,11 +94,15 @@ public:
 	Sprite* backGround1; // 배경 반복
 	Sprite* backGround2;
 	
-	Node* chapter2_Bush; // 챕터 2
-	Sprite* bush[4];
-	Sprite* rose;
-	Sprite* tree[2];
-	Sprite* Cloud;
+	Node* chapter2_Background;// 챕터 2
+	Node* Bush[2]; 
+	Node* Tree[2];
+	Sprite* bush[10];
+	Sprite* rose[2];
+	Sprite* tree[6];
+	Sprite* cloud[2];
+
+	Sprite* dungcol[2];
 	/// Sprite //////////////
 
 	Sprite* cake[2000];
@@ -74,6 +110,7 @@ public:
 	Sprite *Hurdle[2000];
 	Sprite *Heart[4];
 	Sprite *Fiver[5];
+	Sprite *Crash[2];
 
 	/// 스토리//
 
@@ -131,19 +168,15 @@ public:
 	Sprite* stop;
 	Sprite* rePlay;
 
-	/// 종료시 팝업 ///////////
-	Sprite* _clear;
-	Sprite* clear_Background;
-	Label* goal;
-
-
-
 	/// Stage ////////
 	bool isStart;
 	int ing_Messege;
 	void Stage1(Label* label);
 
 	/// function ////////////
+	
+	void Crashing();
+	void inGame(float dt);
 	virtual bool onTouchBegan(Touch* touch, Event* _event);
 	virtual void onTouchMoved(Touch* touch, Event* _event);
 	virtual void onTouchEnded(Touch* touch, Event* _event);
@@ -167,6 +200,7 @@ public:
 	void setClear();
 	void setScript();
 	void setParticle();
+	void crushClear();
 
 	/// 발판 , 케이크, 장애물 /////
 	ParticleSystemQuad *CakeParticle;
@@ -199,17 +233,20 @@ public:
 
 	int lastCakeArr = 0;
 	int lastStickArr = 0;
+	int StickInterval = 0;
 
-	void basicStick();
+	void basicStick(float width);
+	void basicStick(float width, float position);
 	void basicCake(int Repeat);
-	void JumpCake();
-	void JumpTwoCake();
+	void JumpCake(int index);
+	void JumpTwoCake(int index);
 	void VatCake();
 	void SlideCake();
 	void biggerCake();
 	void TeemoCake();
 	void EatCake();
 	void FastCake();
+	void ManyCake();
 	void FiverCake();
 	void CrashHurdle();
 
@@ -259,4 +296,5 @@ private:
 	PhysicsWorld *sceneWorld;
 	void SetPhysicsWorld(PhysicsWorld *world) { sceneWorld = world; };
 	bool onContactBegin(PhysicsContact &contact);
+	bool onContactEnded(PhysicsContact &contact);
 };
