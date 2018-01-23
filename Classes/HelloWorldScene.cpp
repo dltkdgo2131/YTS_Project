@@ -58,10 +58,7 @@ bool HelloWorld::init()
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);
 
 	/// 수집 젤리, 점수/////////
-	Collecting_Cake = Label::createWithTTF("0 / 800", "fonts/NanumBarun/NanumBarun.ttf", 24);
-	//	Collecting_Cake = Label::createWithCharMap("fonts/Number.png", 50, 50, 48);
-	Collecting_Cake->setPosition(83, 525);
-	this->addChild(Collecting_Cake);
+
 
 	/// 젤리 ///////////////////
 	for (int i = 0; i < 2000; i++)
@@ -81,10 +78,17 @@ void HelloWorld::update(float dt)
 		{
 			for (int i = 0; i < 3; i++)
 				tempCake += 1.0f;
-
-			clearTerm->setString(StringUtils::format("%.0f %d", tempCake, Max_Collecting_Cake));
 			if (tempCake > i_Collecting_Cake - 1)
 				tempCake = i_Collecting_Cake;
+			clearTerm->setString(StringUtils::format("%.0f /  %d", tempCake, Max_Collecting_Cake));
+		}
+		if (tempCake != i_Collecting_Coin)
+		{
+			for (int i = 0; i < 3; i++)
+				tempCoin += 1.0f;
+			if (tempCoin > i_Collecting_Coin - 1)
+				tempCoin = i_Collecting_Coin;
+			clearCoin->setString(StringUtils::format("%.0f", tempCoin));
 		}
 	}
 	if (isPause == false)
@@ -98,14 +102,14 @@ void HelloWorld::inGame(float dt)
 	////follow_Camera->setPosition(follow_Camera->getPositionX() + 4.0f, 360);
 	//this->runAction(camera);
 	/// 케이크, 장애물 //////////
-	Collecting_Cake->setString(StringUtils::format("%.0f  %d", i_Collecting_Cake, Max_Collecting_Cake));
-	Collecting_Coin->setString(StringUtils::format("%d", i_Collecting_Coin));
+	Collecting_Cake->setString(StringUtils::format("%.0f /  %d", i_Collecting_Cake, Max_Collecting_Cake));
+	Collecting_Coin->setString(StringUtils::format("%.0f", i_Collecting_Coin));
 
 	switch (Stage)
 	{
 	case 1:
-		if (i_Collecting_Cake >= 700)
-			Max_Collecting_Cake = 900;
+		if (i_Collecting_Cake >= 500)
+			Max_Collecting_Cake = 700;
 	}
 	//	EatCake();
 	//	CrashHurdle();
@@ -114,7 +118,7 @@ void HelloWorld::inGame(float dt)
 
 	/// 플레이어 점프, 슬라이딩 /////////
 
-	Condition_Process();
+	Condition_Process(dt);
 	B_time -= dt;
 	opacity_time -= dt;
 	if (A_Scale >= 0.8f)
@@ -138,6 +142,12 @@ void HelloWorld::inGame(float dt)
 	{
 		opacity_Button();
 	}
+	if (C_1->getPositionY() <= -100)
+	{
+		isClear = true;
+		isPause = true;
+		Crush_Fail();
+	}
 }
 void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 {
@@ -154,7 +164,31 @@ void HelloWorld::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 		isSlide = true;
 		C_animation(4);
 	}
+	if (keyCode == EventKeyboard::KeyCode::KEY_Q)
+	{
+		isPause = true;
+		Check_Star();
+		if (iStar > 0)
+			crushClear();
+		else if (iStar <= 0)
+			Crush_Fail();
+		isClear = true;
+	}
 
+	if (keyCode == EventKeyboard::KeyCode::KEY_A)
+	{
+		isAlice[2] = true;
+		if (SlowTime >= 0.0f)
+			SlowTime = 5.0f;
+		FastTime = 5.0f;
+		speed = -1200;
+		if (Alice_Condition != 2)
+			Alice_Condition = 4;
+	}
+	if (keyCode == EventKeyboard::KeyCode::KEY_S)
+	{
+		i_Collecting_Cake += 50;
+	}
 }
 
 void HelloWorld::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
@@ -179,7 +213,7 @@ bool HelloWorld::onContactBegin(PhysicsContact &contact)
 				(i + 3 == a->getCollisionBitmask() && 1 == b->getCollisionBitmask()))
 			{
 				isCrushHurdle = true;
-				if (isHurdle[i] == true && Alice_Condition == 1 && isFiver[5] == false)
+				if (isHurdle[i] == true && Alice_Condition == 1 && isFiver[5] == false && !isAlice[1] && !isAlice[2] && !isAlice[3])
 				{
 					Heart[NowHeart]->setTexture(CCTextureCache::sharedTextureCache()->addImage(StringUtils::format("Texture/Object/Heart/None_Heart.png")));
 					Hurdle[i]->getPhysicsBody()->removeFromWorld();
@@ -202,7 +236,8 @@ bool HelloWorld::onContactBegin(PhysicsContact &contact)
 					h_Repeat = 1;
 
 					Alice_Condition = 3;
-					B_time = 0.6f;
+					isAlice[3] = true;
+					B_time = 3.0f;
 					NowHeart -= 1;
 					if (NowHeart == -1)
 						Director::getInstance()->replaceScene(TransitionCrossFade::create(1.0f, HelloWorld::createScene()));
@@ -219,31 +254,63 @@ bool HelloWorld::onContactBegin(PhysicsContact &contact)
 				isCrushCake = true;
 				if (isCake[i] == true)
 				{
-				
-
-					cake[i]->setVisible(false);
+					//cake[i]->setVisible(false);
 					isCake[i] = false;
 					cake[i]->getPhysicsBody()->removeFromWorld();
 
 					if (cake[i]->getTag() == 1)
 					{
 						i_Collecting_Cake += 1;
-						CakeParticle = ParticleSystemQuad::create("Texture/Particle/CakeParticle.plist");
-						CakeParticle->setPosition(cake[i]->getPosition());
-						CakeParticle->setScale(0.1f);
-						CakeParticle->setLife(1.0f);
-						CakeParticle->setGlobalZOrder(0);
-						/*		CakeParticle->setSpeed(500);*/
-						//				CakeParticle->setAngle(300);
-						cake[i]->setVisible(true);
-						cake[i]->setZOrder(-1);
-						cake[i]->addChild(CakeParticle);
+						cake[i]->runAction(Spawn::create(FadeOut::create(0.3f), ScaleTo::create(0.5f, 1.0f), MoveBy::create(2.0f, Vec2(0, 800)), NULL));
+						//cake[i]->runAction(Sequence::create(ScaleTo::create(0.1f, 0.8f), ScaleTo::create(0.1f, 0.0f), NULL));
+
+					
+						//CakeParticle = ParticleSystemQuad::create("Texture/Particle/CakeParticle.plist");
+						//CakeParticle->setPosition(cake[i]->getPosition());
+						//CakeParticle->setScale(0.1f);
+						//CakeParticle->setLife(1.0f);
+						//CakeParticle->setGlobalZOrder(0);
+						///*		CakeParticle->setSpeed(500);*/
+						////				CakeParticle->setAngle(300);
+						//this->addChild(CakeParticle);
+						
 					}
 					if (cake[i]->getTag() == 2)
+					{
+						if (isFiver[5])
+						{
+							if (plusArr >= 30)
+								plusArr = 0;
+							i_Collecting_Cake += 1;
+							plusCoin[plusArr] = Label::createWithTTF("+1", "fonts/Marker Felt.ttf", 36);
+							plusCoin[plusArr]->setPosition(Collecting_Cake->getPositionX() + 100, Collecting_Cake->getPositionY());
+							this->addChild(plusCoin[plusArr]);
+							plusCoin[plusArr]->runAction(Spawn::create(FadeOut::create(0.3f), ScaleTo::create(0.3f, 1.0f), MoveBy::create(3.6f, Vec2(1200, 0)), NULL));
+							Collecting_Coin->runAction(Sequence::create(Spawn::create(ScaleTo::create(0.1f, 1.3f), MoveTo::create(0.2f, Vec2(203, 435)), NULL), (Spawn::create(ScaleTo::create(0.2f, 1.0f), NULL)), NULL));
+							Collecting_Cake->runAction(Sequence::create(Spawn::create(ScaleTo::create(0.1f, 1.3f), MoveTo::create(0.2f, Vec2(203, 503)), NULL), (Spawn::create(ScaleTo::create(0.2f, 1.0f), NULL)), NULL));
+						}
+						if (plusArr >= 30)
+							plusArr = 0;
+						cake[i]->setPosition(C_1->getPositionX(), C_1->getPositionY() + 100);
+						cake[i]->runAction(Spawn::create(FadeOut::create(0.3f), ScaleTo::create(0.3f, 0.8f), MoveBy::create(2.1f, Vec2(0, 700)), NULL));
 						i_Collecting_Coin += 1;
+
+						plusCoin[plusArr] = Label::createWithTTF("+1", "fonts/Marker Felt.ttf", 36);
+						plusCoin[plusArr]->setPosition(C_1->getPositionX() + 50, C_1->getPositionY() + 100);
+						this->addChild(plusCoin[plusArr]);
+						plusCoin[plusArr]->runAction(Spawn::create(FadeOut::create(0.3f), ScaleTo::create(0.3f, 1.0f), MoveBy::create(2.1f, Vec2(0, 700)), NULL));
+
+						if (plusArr >= 30)
+							plusArr = 0;
+						plusCoin[plusArr] = Label::createWithTTF("+1", "fonts/Marker Felt.ttf", 36);
+						plusCoin[plusArr]->setPosition(Collecting_Coin->getPositionX() + 50, Collecting_Coin->getPositionY());
+						plusCoin[plusArr]->runAction(Spawn::create(FadeOut::create(0.3f), ScaleTo::create(0.3f, 1.3f), MoveBy::create(3.6f, Vec2(1200, 0)), NULL));
+						this->addChild(plusCoin[plusArr]);
+					}
 
 					if (cake[i]->getTag() >= 3)
 					{
+						cake[i]->setVisible(false);
 						for (int j = 3; j < 8; j++)
 						{
 							if (cake[i]->getTag() == j)
@@ -278,6 +345,7 @@ bool HelloWorld::onContactBegin(PhysicsContact &contact)
 					case bigger:
 						item[i]->setVisible(false);
 						isItem[i] = false;
+						isAlice[1] = true;
 						Alice_Condition = 2;
 						A_time = 5.0f;
 						break;
@@ -290,6 +358,7 @@ bool HelloWorld::onContactBegin(PhysicsContact &contact)
 					case fast:
 						item[i]->setVisible(false);
 						isItem[i] = false;
+						isAlice[2] = true;
 						if (SlowTime >= 0.0f)
 							SlowTime = 5.0f;
 						FastTime = 5.0f;
@@ -314,7 +383,11 @@ bool HelloWorld::onContactBegin(PhysicsContact &contact)
 			100000 == a->getCollisionBitmask() && 1 == b->getCollisionBitmask() && isClear == false)
 		{
 			isPause = true;
-			crushClear();
+			Check_Star();
+			if (iStar > 0)
+				crushClear();
+			else if (iStar <= 0)
+				Crush_Fail();
 			isClear = true;
 			/*Director::getInstance()->replaceScene(TransitionFadeBL::create(0.5f, HelloWorld::createScene()));*/
 		}
@@ -401,14 +474,10 @@ void HelloWorld::onTouchEnded(Touch* touch, Event* _event)
 	slide_Button->setTexture(Director::getInstance()->getTextureCache()->addImage("Texture/Object/UI/SlideButton.png"));
 	//jump_Button->setTexture(Director::getInstance()->getTextureCache()->addImage("Texture/Object/UI/JumpButton.png"));
 	isSlide = false;
-	if (stop_Button->getBoundingBox().containsPoint(touch->getLocation()))
-	{
-		stop_BackGround->setVisible(true);
-		SimpleAudioEngine::getInstance()->playEffect("btClick.wav", false);
-		isPause = true;
-		//	Director::getInstance()->getScheduler()->pauseTarget(this);
-		C_1->stopAllActions();
-	}
+	//if (stop_Button->getBoundingBox().containsPoint(touch->getLocation()))
+	//{
+
+	//}
 
 	if (Skip->getBoundingBox().containsPoint(touch->getLocation()))
 	{
@@ -548,7 +617,6 @@ void HelloWorld::onTouchEnded(Touch* touch, Event* _event)
 		option->setTexture(Director::getInstance()->getTextureCache()->addImage("Texture/Object/UI/option.png"));
 		if (resume->getBoundingBox().containsPoint(touch->getLocation()))
 		{
-
 			stop_BackGround->setVisible(false);
 			//Director::getInstance()->getScheduler()->resumeTarget(this);
 			isPause = false;

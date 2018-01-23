@@ -16,20 +16,23 @@ void HelloWorld::JumpProcess()
 	switch (direction)
 	{
 	case 0:
-	/*	if (y > y_base)
-			y = y_base;*/
-		
+		/*	if (y > y_base)
+				y = y_base;*/
+
 		if (isCrush == false || y <= y_base - 50)
 		{
-			y -= gravity;
-			gravity += jump_accell;
+			if (!isFiver[5] && !isAlice[3] && !isAlice[2])
+			{
+				y -= gravity;
+				gravity += jump_accell;
+			}
 		}
 		else if (isCrush == true)//&& C_1->getBoundingBox().intersectsCircle(Stick)
 		{
 			n_JumpCount = 0;
 			y = y_base;
 		}
-		
+
 		if (isJump == true)
 		{
 			isJump = false;
@@ -53,7 +56,8 @@ void HelloWorld::JumpProcess()
 		y -= gravity;
 		//if (y > y_base)
 		//	gravity += jump_accell;
-		if (isCrush == false)
+
+		if (isCrush == false && !isFiver[5] && !isAlice[3] && !isAlice[2] || y > y_base)
 			gravity += jump_accell;
 		else
 		{
@@ -62,18 +66,12 @@ void HelloWorld::JumpProcess()
 			//y = y_base;
 		}
 		break;
-	} 
+	}
 }
-void HelloWorld::Condition_Process()
+void HelloWorld::Condition_Process(float dt)
 {
-
-	switch (Alice_Condition)
+	if (isAlice[1])
 	{
-	case 1:
-		C_1->setScale(A_Scale);
-		A_time = 0;
-		break;
-	case 2:
 		if (y < y_base)
 			y = y_base;
 		if (A_time <= 0.0f)
@@ -101,9 +99,75 @@ void HelloWorld::Condition_Process()
 				Alice_Condition = 4;
 			else
 				Alice_Condition = 1;
-
+			isAlice[1] = false;
 			y_base = 220.0f;
+			sub_Condition = 3;
+			isAlice[3] = true;
+			B_time = 3;
 		}
+	}
+
+	if (isAlice[2] || isFiver[5])
+	{
+		_AliceDelay += dt;
+		for (int i = 0; i < 5; i++)
+		{
+			_Alice[i]->setVisible(true);
+			if (_AliceDelay >= 0.1f * (i + 1) && _Alice[i]->getNumberOfRunningActions() == 0)
+			{
+				_Alice[i]->setOpacity(255);
+				_Alice[i]->setPosition(C_1->getPosition());
+				_Alice[i]->runAction(Spawn::create(FadeOut::create(0.5f), MoveBy::create(0.5f, Vec2(-300, 0)), NULL));
+			}
+			_Alice[i]->setRotation(C_1->getRotation());
+		}
+		
+		/*if (_AliceDelay >= 0.2f)
+			_Alice[1]->runAction(RepeatForever::create(Spawn::create(FadeOut::create(0.5f), ScaleTo::create(0.5f, 1.0f), MoveBy::create(0.5f, Vec2(-300, 0)), NULL)));
+		if (_AliceDelay >= 0.3f)
+			_Alice[2]->runAction(RepeatForever::create(Spawn::create(FadeOut::create(0.5f), ScaleTo::create(0.5f, 1.0f), MoveBy::create(0.5f, Vec2(-300, 0)), NULL)));
+		if (_AliceDelay >= 0.4f)
+			_Alice[3]->runAction(RepeatForever::create(Spawn::create(FadeOut::create(0.5f), ScaleTo::create(0.5f, 1.0f), MoveBy::create(0.5f, Vec2(-300, 0)), NULL)));
+		if (_AliceDelay >= 0.5f)
+			_Alice[4]->runAction(RepeatForever::create(Spawn::create(FadeOut::create(0.5f), ScaleTo::create(0.5f, 1.0f), MoveBy::create(0.5f, Vec2(-300, 0)), NULL)));*/
+	}
+
+	if (isAlice[3])
+	{
+		if (sub_Condition == 1)
+		{
+			C_animation(3);
+			sub_Condition = 2;
+		}
+		if (C_1->getNumberOfRunningActions() == 0)
+		{
+			sub_Condition = 3;
+			if (isSlide)
+				C_animation(4);
+			else if (direction == 0)
+				C_animation(1);
+			else if (direction == 1 || direction == 2)
+				C_animation(2);
+		}
+		else if (B_time > 0.0f)
+			A_opacity();
+		else if (B_time <= 0.0f)
+		{
+			C_1->setOpacity(255);
+			Alice_Condition = 1;
+			isAlice[3] = false;
+			sub_Condition = 1;
+		}
+	}
+
+	switch (Alice_Condition)
+	{
+	case 1:
+		//C_1->setScale(A_Scale);
+		//A_time = 0;
+		break;
+	case 2:
+
 
 
 		//else if (A_time <= 0 && C_1->getScale() > 0.4f)
@@ -112,26 +176,7 @@ void HelloWorld::Condition_Process()
 		//	Alice_Condition = 1;
 		break;
 	case 3:
-		if (sub_Condition == 1)
-		{
-			C_animation(3);
-			sub_Condition = 2;
-		}
-		else if (B_time > 0.0f)
-			A_opacity();
-		else if (B_time <= 0.0f)
-		{
-			C_1->setOpacity(255);
-			Alice_Condition = 1;
-			sub_Condition = 1;
-			if (isSlide)
-				C_animation(4);
-			else if (direction == 0)
-				C_animation(1);
-			else if (direction == 1 || direction == 2)
-				C_animation(2);
 
-		}
 	case 4:
 		break;
 	default:
@@ -195,14 +240,20 @@ void HelloWorld::C_animation(int Select)
 }
 void HelloWorld::A_opacity()
 {
-	if (opacity_time <= 0.0f)
+	if (OpacityDirec == 0)
 	{
-		opacity_time = 0.08f;
-		if (C_1->getOpacity() == 127)
-			C_1->setOpacity(255);
-		else
-			C_1->setOpacity(127);
+		C_1->setOpacity(C_1->getOpacity() - 5.0f);
+		CCLOG("%f", C_1->getOpacity());
+		if (C_1->getOpacity() <= 70)
+			OpacityDirec == 1;
 	}
+	else if (OpacityDirec == 1)
+	{
+		C_1->setOpacity(C_1->getOpacity() + 5.0f);
+		if (C_1->getOpacity() >= 250)
+			OpacityDirec == 0;
+	}
+
 }
 //void HelloWorld::_jump(Ref* pSender)
 //{

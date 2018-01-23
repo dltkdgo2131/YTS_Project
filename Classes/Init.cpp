@@ -201,16 +201,31 @@ void HelloWorld::setCharacter()
 {
 	C_location.setPoint(300, 200);
 	LastPosition.setPoint(0, 300);
+	for (int i = 0; i < 4; i++)
+		isAlice[i] = false;
 	A_time = 0;
 	B_time = 4.9f;
 	A_Scale = 0.5f;
-
+	OpacityDirec = 0;
 	Alice_Condition = 1;
 
+	for (int i = 0; i < 5; i++)
+	{
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Texture/Character/Character_1.plist");
+
+		_Alice[i] = Sprite::createWithSpriteFrameName("run-1.png");
+		_Alice[i]->setScale(0.5f);
+		_Alice[i]->setTag(1);
+		y = y_base;
+		_Alice[i]->setOpacity(0);
+		_Alice[i]->setPosition(C_location.x, y);
+		_Alice[i]->setAnchorPoint(Point(0.5, 0.5));
+		this->addChild(_Alice[i]);
+	}
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Texture/Character/Character_1.plist");
 
 	C_1 = Sprite::createWithSpriteFrameName("run-1.png");
-	C_1->setScale(0.4f, 0.4f);
+	C_1->setScale(0.5f);
 	C_1->setTag(1);
 	y = y_base;
 	C_1->setPosition(C_location.x, y);
@@ -244,12 +259,30 @@ void HelloWorld::setUI()
 {
 	m_label = 1;
 	time_label = 0.2f;
-
+	tempCoin = 0;
+	// 모은 코인
 	i_Collecting_Coin = 0;
-	Collecting_Coin = Label::create("", "fonts/NanumBarun/NanumBarun.ttf", 24);
+	s_Collecting_Coin = Sprite::create("Texture/Object/Item/Gold_Coin.png");
+	s_Collecting_Coin->setScale(0.6f);
+	s_Collecting_Coin->setPosition(50, 435);
+	this->addChild(s_Collecting_Coin);
+	Collecting_Coin = Label::create("", "fonts/Marker Felt.ttf", 36);
+	Collecting_Coin->setColor(ccc3(153, 102, 0));
 	//	Collecting_Coin = Label::createWithCharMap("fonts/number.png", 50, 50, 48);
-	Collecting_Coin->setPosition(83, 475);
+	Collecting_Coin->setPosition(173, 435);
 	this->addChild(Collecting_Coin, 5);
+
+	//모은 케이크
+	i_Collecting_Cake = 0;
+	s_Collecting_Cake = Sprite::create("Texture/Object/Cake/Cake.png");
+	s_Collecting_Cake->setScale(0.6f);
+	s_Collecting_Cake->setPosition(50, 505);
+	this->addChild(s_Collecting_Cake);
+	Collecting_Cake = Label::createWithTTF("0 / 800", "fonts/Marker Felt.ttf", 36);
+	Collecting_Cake->setColor(ccc3(153, 102, 0));
+	//Collecting_Cake = Label::createWithCharMap("fonts/Number.png", 50, 50, 48);
+	Collecting_Cake->setPosition(173, 505);
+	this->addChild(Collecting_Cake);
 
 	jump_Button = Sprite::create("Texture/Object/UI/JumpButton.png");
 	jump_Button->setPosition(120, 90);
@@ -260,11 +293,14 @@ void HelloWorld::setUI()
 	this->addChild(slide_Button, 7);
 	this->addChild(jump_Button, 7);
 
-	stop_Button = Sprite::create("Texture/Object/UI/Stop_Button.png");
+	stop_Button = MenuItemImage::create("Texture/Object/UI/Stop_Button.png", "Texture/Object/UI/p_Stop_Button.png", CC_CALLBACK_1(HelloWorld::CC_StopButton, this));
 	stop_Button->setPosition(1217, 663);
 	stop_Button->setAnchorPoint(Point(0.5f, 0.5f));
 	stop_Button->setScale(1.0f, 1.0f);
-	this->addChild(stop_Button, 7);
+
+	_stop = Menu::create(stop_Button, NULL);
+	_stop->setPosition(0, 0);
+	this->addChild(_stop);
 
 	stop_BackGround = Sprite::create("Texture/Object/UI/Background.png");
 	stop_BackGround->setPosition(0, 0);
@@ -311,6 +347,7 @@ void HelloWorld::setMath()
 		direc[i] = 1;
 		bat_Direc[i] = 1;
 	}
+	
 	removeCake = 0; // 삭제된 케이크
 
 	gravity = 0;
@@ -377,7 +414,7 @@ void HelloWorld::setScript()
 	switch (Chapter)
 	{
 	case 1:
-		break;
+		
 		switch (Stage)
 		{
 		case 1:
@@ -400,6 +437,7 @@ void HelloWorld::setScript()
 		default:
 			break;
 		}
+		break;
 	}
 
 
@@ -495,93 +533,30 @@ void HelloWorld::setClear()
 	black_Background->setPosition(0, 0);
 	black_Background->setOpacity(127);
 	_Clear->addChild(black_Background);
-
-
-}
-void HelloWorld::crushClear()
-{
-	//if (NowHeart < 3)
-	//	iStar -= 1;
-	//switch (point::get()->StageNum)
-	//{
-	//case 1:
-	//	if (i_Collecting_Cake < 700)
-	//		iStar -= 2;
-	//	else if (i_Collecting_Cake < 900)
-	//		iStar -= 1;
-	//	break;
-	//case 2:
-	//	break;
-	//}
-	home = MenuItemImage::create("Texture/Object/UI/home.png",
-		"Texture/Object/UI/p_home.png",
-		CC_CALLBACK_1(HelloWorld::goHome, this));
-	home->setAnchorPoint(Point(0.5f, 0.5f));
-	home->setPosition(0, 0);
-
-	Next = MenuItemImage::create("Texture/Object/UI/Next.png",
-		"Texture/Object/UI/p_Next.png",
-		CC_CALLBACK_1(HelloWorld::goNext, this));
-	Next->setAnchorPoint(Point(0.5f, 0.5f));
-	Next->setPosition(0, 0);
-
-	//back = MenuItemImage::create("Texture/Object/UI/back.png", "Texture/Object/UI/p_back.png", CC_CALLBACK_1(HelloWorld::goBack, this));
-	//back->setAnchorPoint(Point(0.5f, 0.5f));
-	//back->setPosition(535, 160);
-	//_Clear->addChild(back, 1);
-
-	ClearMenu = Menu::create(home, Next, NULL);
-	ClearMenu->setPosition(640, 150);
-	ClearMenu->alignItemsHorizontallyWithPadding(100);
-	ClearMenu->setAnchorPoint(Point(0.5f, 0.5f));
-	_Clear->addChild(ClearMenu, 1);
-
-	_Clear->setVisible(true);
-
-
-	if (iStar <= 0)
-	{
-		back_Clear = Sprite::create("Texture/Object/Clear/Fail.png");
-		back_Clear->setAnchorPoint(Point(0.5f, 0.5f));
-		back_Clear->setPosition(635, 625);
-		_Clear->addChild(back_Clear,1);
-		clear_Background = Sprite::create("Texture/Object/Clear/BG2.png");
-		clear_Background->setAnchorPoint(Point(0.5f, 0.5f));
-		clear_Background->setPosition(640, 360);
-		_Clear->addChild(clear_Background);
-	}
-	else if (iStar > 0)
-	{
-		clear_Background = Sprite::create("Texture/Object/Clear/BG1.png");
-		clear_Background->setAnchorPoint(Point(0.5f, 0.5f));
-		clear_Background->setPosition(640, 360);
-		_Clear->addChild(clear_Background);
-	}
-
 	star_tle = Sprite::create("Texture/Object/Clear/Star_tle.png");
 	star_tle->setAnchorPoint(Point(0.5f, 0.5f));
 	star_tle->setPosition(635, 485);
-	_Clear->addChild(star_tle);
+	_Clear->addChild(star_tle, 1);
 
 	for (int i = 0; i < iStar; i++)
 	{
 		star[i] = Sprite::create(StringUtils::format("Texture/Object/clear/star%d.png", i + 1));
-		star[i]->setPosition(540 + (90 * i), 500);
+		switch (i)
+		{
+		case 0:
+			star[i]->setPosition(540 + 25 + (80 * i), 490);
+		case 1:
+			star[i]->setPosition(610, 490);
+		case 2:
+			star[i]->setPosition(690, 490);
+		default:
+			break;
+		}
+
 		star[i]->setScale(0.0f);
 		star[i]->setOpacity(0);
-		star_tle->addChild(star[i],1);
-
-		star[i]->runAction(Spawn::create(ScaleTo::create(0.5f + (i * 0.5f), 1.0f), FadeTo::create(0.5f + (i * 0.5f), 255), NULL));
+		this->addChild(star[i], 1);
+		star[i]->setGlobalZOrder(2);
 	}
-
-	// label
-	//clearTerm = Label::create(StringUtils::format("%d / %d", i_Collecting_Cake, Max_Collecting_Cake), "fonts/ChocoCookie.ttf", 24);
-	clearTerm = Label::createWithCharMap("fonts/Number.png", 49, 45, 48);
-	clearTerm->setScale(0.6f);
-//	clearTerm->setString(StringUtils::format("%d 　%d", i_Collecting_Cake, Max_Collecting_Cake));
-	clearTerm->setString("0 0");
-	clearTerm->setPosition(640, 325);
-	_Clear->addChild(clearTerm);
-
-
+	
 }

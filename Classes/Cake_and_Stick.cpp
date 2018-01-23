@@ -12,7 +12,7 @@ void HelloWorld::MoveCake_Stick(float dt)
 
 	//StickNode[i]->setPosition(Point(_Stick1[i]->getPosition()));
 	_clear->runAction(MoveBy::create(FPS, Vec2(speed / 60, 0)));
-	for (int i = 0; _Stick1[i] != nullptr; i++)
+	for (int i = 0 + removeStick; _Stick1[i] != nullptr; i++)
 	{
 		_Stick1[i]->runAction(MoveBy::create(FPS, Vec2(speed / 60, 0)));
 		if (_Stick1[i]->getPositionX() <= 1300 && _Stick1[i]->getPositionX() > (-_Stick1[i]->getContentSize().width) + 300)
@@ -35,14 +35,16 @@ void HelloWorld::MoveCake_Stick(float dt)
 			{
 				_Stick1[i]->getPhysicsBody()->removeFromWorld();
 				_Stick1[i]->setTag(2);
+				removeStick += 1;
 			}
 	}
 	for (int i = 0 + removeCake; cake[i] != nullptr; i++)
 	{
-		cake[i]->runAction(MoveBy::create(FPS, Vec2(speed / 60, 0)));
+		if(isCake[i])
+			cake[i]->runAction(MoveBy::create(FPS, Vec2(speed / 60, 0)));
 		if (cake[i]->getPositionX() <= 1300 && cake[i]->getPositionX() > 0)
 		{
-			if (isCake[i] == true && !(cake[i]->isVisible()))
+			if (isCake[i] == true && !(cake[i]->isVisible()))	
 			{
 				CakeBody = PhysicsBody::createCircle(cake[i]->getContentSize().width / 3, PhysicsMaterial(0, 0, 0));
 				CakeBody->setDynamic(false);
@@ -52,22 +54,24 @@ void HelloWorld::MoveCake_Stick(float dt)
 				cake[i]->setVisible(true);
 			}
 		}
+		
 		if (isFiver[5] == true && cake[i]->getPositionX() <= 800 && cake[i]->getPositionX() > 0)
 		{
 			cake[i]->setTexture(Director::getInstance()->getTextureCache()->addImage("Texture/Object/Item/Gold_Coin.png"));
 			cake[i]->setTag(2);
 			cake[i]->setScale(0.5f);
 		}
-		else if (cake[i]->getPositionX() <= 0)
-			if (isCake[i] == true && cake[i]->isVisible())
+		else if (cake[i]->getPositionX() <= - 1200)
+			if (cake[i]->isVisible())
 			{
-				
+
 				cake[i]->getPhysicsBody()->removeFromWorld();
 				if (removeCake < i + 1)
 					removeCake = i + 1;
 				this->removeChild(cake[i], true);
 
 			}
+
 	}
 	for (int i = 0; Hurdle[i] != nullptr; i++)
 	{
@@ -174,7 +178,13 @@ void HelloWorld::MoveCake_Stick(float dt)
 		Action_Teemo();
 	if (FastTime <= 0.0f && FastTime >= -0.015f)
 	{
-		speed = -600.0f;
+		if(!isFiver[5])
+			speed = -600.0f;
+		isAlice[2] = false;
+		sub_Condition = 3;
+		isAlice[3] = true;
+		B_time = 3;
+		_AliceDelay = 0;
 	}
 	else if (FastTime <= -3.0f && FastTime >= -3.015f)
 		if (Alice_Condition == 4)
@@ -192,6 +202,17 @@ void HelloWorld::MoveCake_Stick(float dt)
 	if (FiverTime <= 0.0f)
 	{
 		isFiver[5] = false;
+		sub_Condition = 3;
+		isAlice[3] = true;
+		B_time = 3;
+		for (int i = 0; i < 5; i++)
+		{
+			isFiver[i] = false;
+			Fiver[i]->setVisible(false);
+		}
+		Collecting_Cake->setPosition(173, 505);
+		Collecting_Coin->setPosition(173, 435);
+		_AliceDelay = 0;
 		FiverTime = 1000.0f;
 		speed = -600;
 	}
@@ -210,7 +231,7 @@ void HelloWorld::basicCake(int Repeat)
 			cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
 			cake[i]->setTag(1);
 			cake[i]->setScale(0.6f);
-			cake[i]->setPosition(1400 + (WIDTH * i), 250);
+			cake[i]->setPosition(1400 + (WIDTH * (i - lastCakeInterval)), 250);
 			cake[i]->setVisible(false);
 			isCake[i] = true;
 
@@ -237,7 +258,7 @@ void HelloWorld::JumpCake(int index)
 			cake[i]->setTag(1);
 			cake[i]->setScale(0.6f);
 		}
-		cake[i]->setPosition(1400 + (WIDTH * i), 250 + (70 * Height));
+		cake[i]->setPosition(1400 + (WIDTH * (i - lastCakeInterval)), 250 + (70 * Height));
 		cake[i]->setVisible(false);
 		isCake[i] = true;
 		if (i < 2 + lastCakeArr) Height++;
@@ -261,7 +282,7 @@ void HelloWorld::JumpCake(int index)
 		Hurdle[CountHurdle]->setTag(4);
 		Hurdle[CountHurdle]->setAnchorPoint(Point(0.5f, 0.5f));
 		Hurdle[CountHurdle]->setRotation(-45);
-		Hurdle[CountHurdle]->setPosition(1400 + (WIDTH * (lastCakeArr + 2.2f)), 1200);
+		Hurdle[CountHurdle]->setPosition(1400 + (WIDTH * (lastCakeArr - lastCakeInterval + 2.2f)), 1200);
 		Hurdle[CountHurdle]->setVisible(false);
 		isHurdle[CountHurdle] = true;
 
@@ -293,7 +314,7 @@ void HelloWorld::JumpTwoCake(int index) {
 			cake[i]->setTag(1);
 			cake[i]->setScale(0.6f);
 		} 
-		cake[i]->setPosition(1400 + (WIDTH * i), 300 + (70 * Height));
+		cake[i]->setPosition(1400 + (WIDTH * (i - lastCakeInterval)), 300 + (70 * Height));
 		cake[i]->setVisible(false);
 		isCake[i] = true;
 	
@@ -309,7 +330,7 @@ void HelloWorld::JumpTwoCake(int index) {
 	{
 	case 1:
 		Hurdle[CountHurdle] = Sprite::create("Texture/Object/Hurdle/Chapter1/Table_Chair.png");
-		Hurdle[CountHurdle]->setPosition(1450 + WIDTH * (lastCakeArr + 4) - 30, 300);
+		Hurdle[CountHurdle]->setPosition(1450 + WIDTH * ((lastCakeArr - lastCakeInterval) + 4) - 30, 300);
 		Hurdle[CountHurdle]->setScale(1.0f, 1.0f);
 		Hurdle[CountHurdle]->setTag(1);
 		Hurdle[CountHurdle]->setVisible(false);
@@ -367,7 +388,7 @@ void HelloWorld::basicStick(float width)
 	_Stick1[lastStickArr]->setVisible(false);
 	_Stick1[lastStickArr]->setTag(1);
 	_Stick1[lastStickArr]->setContentSize(Size(width, _Stick1[lastStickArr]->getContentSize().height));
-	_Stick1[lastStickArr]->setPosition(StickInterval + (lastCakeArr * WIDTH), 0);
+	_Stick1[lastStickArr]->setPosition(StickInterval + ((lastCakeArr - lastCakeInterval) * WIDTH), 0);
 
 	this->addChild(_Stick1[lastStickArr], 2);
 	lastStickArr += 1;
@@ -388,7 +409,7 @@ void HelloWorld::basicStick(float width, float position)
 	_Stick1[lastStickArr]->setVisible(false);
 	_Stick1[lastStickArr]->setTag(1);
 	_Stick1[lastStickArr]->setContentSize(Size(width, _Stick1[lastStickArr]->getContentSize().height));
-	_Stick1[lastStickArr]->setPosition(StickInterval + (lastCakeArr * WIDTH) + position, 0);
+	_Stick1[lastStickArr]->setPosition(StickInterval + ((lastCakeArr - lastCakeInterval) * WIDTH) + position, 0);
 
 	this->addChild(_Stick1[lastStickArr], 2);
 	lastStickArr += 1;
@@ -400,7 +421,7 @@ void HelloWorld::SlideCake()
 		cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
 		cake[i]->setTag(1);
 		cake[i]->setScale(0.6f);
-		cake[i]->setPosition(1400 + (WIDTH * i), 200);
+		cake[i]->setPosition(1400 + (WIDTH * (i - lastCakeInterval)), 200);
 		cake[i]->setVisible(false);
 		isCake[i] = true;
 
@@ -417,7 +438,7 @@ void HelloWorld::SlideCake()
 	Hurdle[CountHurdle]->setScale(1.0f, 0.85f);
 	Hurdle[CountHurdle]->setTag(2);
 	Hurdle[CountHurdle]->setAnchorPoint(Point(0.5, 0.5));
-	Hurdle[CountHurdle]->setPosition(1420 + (WIDTH * (lastCakeArr + 2.0f)), 332.5);
+	Hurdle[CountHurdle]->setPosition(1420 + (WIDTH * ((lastCakeArr - lastCakeInterval) + 2.0f)), 332.5);
 	Hurdle[CountHurdle]->setVisible(false);
 	Hurdle[CountHurdle + 1] = Sprite::create("Texture/Object/Hurdle/Chapter1/Spider_Rain.png");
 
@@ -439,7 +460,7 @@ void HelloWorld::VatCake()
 		cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
 		cake[i]->setTag(1);
 		cake[i]->setScale(0.6f);
-		cake[i]->setPosition(1400 + (WIDTH * i), 200);
+		cake[i]->setPosition(1400 + (WIDTH * (i - lastCakeInterval)), 200);
 		cake[i]->setVisible(false);
 		isCake[i] = true;
 
@@ -464,7 +485,7 @@ void HelloWorld::VatCake()
 		Hurdle[i]->setTag(3);
 		Hurdle[i]->setAnchorPoint(Point(0.5f, 0.5f));
 		Hurdle[i]->setRotation(-45);
-		Hurdle[i]->setPosition(1400 + (WIDTH * (lastCakeArr + 1.0f) + (150 * (i - CountHurdle))), 900);
+		Hurdle[i]->setPosition(1400 + (WIDTH * ((lastCakeArr - lastCakeInterval) + 1.0f) + (150 * (i - CountHurdle))), 900);
 		Hurdle[i]->setVisible(false);
 		isHurdle[i] = true;
 		case_Bat = 2;
@@ -498,7 +519,7 @@ void HelloWorld::biggerCake()
 			cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
 			cake[i]->setTag(1);
 			cake[i]->setScale(0.6f);
-			cake[i]->setPosition(1400 + (WIDTH * i), 200);
+			cake[i]->setPosition(1400 + (WIDTH * (i - lastCakeInterval)), 200);
 			cake[i]->setVisible(false);
 			isCake[i] = true;
 			this->addChild(cake[i], 5);
@@ -509,7 +530,7 @@ void HelloWorld::biggerCake()
 			cake[i ] = Sprite::create("Texture/Object/Item/Gold_Coin.png");
 			cake[i ]->setTag(2);
 			cake[i ]->setScale(1.0f);
-			cake[i ]->setPosition(1400 + (WIDTH * i), 200);
+			cake[i ]->setPosition(1400 + (WIDTH * (i - lastCakeInterval)), 200);
 			cake[i]->setVisible(false);
 			isCake[i] = true;
 			this->addChild(cake[i], 5);
@@ -529,7 +550,7 @@ void HelloWorld::biggerCake()
 		Hurdle[i]->setScale(1.0f, 0.85f);
 		Hurdle[i]->setTag(2);
 		Hurdle[i]->setAnchorPoint(Point(0.5, 0.5));
-		Hurdle[i]->setPosition(1550 + (WIDTH * (lastCakeArr + 2.0f) + (250 * (i_origin - CountHurdle))), 332.5);
+		Hurdle[i]->setPosition(1550 + (WIDTH * ((lastCakeArr - lastCakeInterval) + 2.0f) + (250 * (i_origin - CountHurdle))), 332.5);
 		Hurdle[i]->setVisible(false);
 		Hurdle[i + 1] = Sprite::create("Texture/Object/Hurdle/Chapter1/Spider_Rain.png");
 
@@ -541,7 +562,7 @@ void HelloWorld::biggerCake()
 		this->addChild(Hurdle[i], 5);
 	}
 	item[CountItem] = Sprite::create("Texture/Object/Item/Bigger.png");
-	item[CountItem]->setPosition(1400 + (WIDTH * lastCakeArr), 482.5);
+	item[CountItem]->setPosition(1400 + (WIDTH * (lastCakeArr - lastCakeInterval)), 482.5);
 	item[CountItem]->setScale(0.5f, 0.5f);
 	item[CountItem]->setTag(0);
 	item[CountItem]->setVisible(false);
@@ -559,7 +580,7 @@ void HelloWorld::TeemoCake()
 		cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
 		cake[i]->setTag(1);
 		cake[i]->setScale(0.6f);
-		cake[i]->setPosition(1400 + (WIDTH * i), 200);
+		cake[i]->setPosition(1400 + (WIDTH * (i - lastCakeInterval)), 200);
 		cake[i]->setVisible(false);
 		isCake[i] = true;
 
@@ -572,7 +593,7 @@ void HelloWorld::TeemoCake()
 		{
 			int j_origin = j - CountItem;
 			item[(i * 7) + j] = Sprite::create("Texture/Object/Item/Teemo_Item.png");
-			item[(i * 7) + j]->setPosition(1400 + (WIDTH * (lastCakeArr + 1)) + (150 * j_origin), 382.5 - (100 * i));
+			item[(i * 7) + j]->setPosition(1400 + (WIDTH * ((lastCakeArr - lastCakeInterval) + 1)) + (150 * j_origin), 382.5 - (100 * i));
 			item[(i * 7) + j]->setScale(0.5f, 0.5f);
 			item[(i * 7) + j]->setTag(1);
 			item[(i * 7) + j]->setRotation(90);
@@ -590,7 +611,7 @@ void HelloWorld::FastCake()
 	int Height = 0;
 	//int C_random = (rand() % 2) + 1;
 	item[CountItem] = Sprite::create("Texture/Object/Item/Teemo_Item.png");
-	item[CountItem]->setPosition(1300 + (WIDTH * (lastCakeArr + 1)), 200);
+	item[CountItem]->setPosition(1300 + (WIDTH * (lastCakeArr - lastCakeInterval + 1)), 200);
 	item[CountItem]->setScale(0.5f, 0.5f);
 	item[CountItem]->setTag(2);
 	item[CountItem]->setVisible(false);
@@ -605,7 +626,7 @@ void HelloWorld::FastCake()
 			cake[(j * 20) + i] = Sprite::create("Texture/Object/Cake/Cake.png");
 			cake[(j * 20) + i]->setTag(1);
 			cake[(j * 20) + i]->setScale(0.6f);
-			cake[(j * 20) + i]->setPosition(1400 + (WIDTH * (i + j * 20)), 250 + 35 * Height);
+			cake[(j * 20) + i]->setPosition(1400 + (WIDTH * ((i - lastCakeInterval) + j * 20)), 250 + 35 * Height);
 			cake[(j * 20) + i]->setVisible(false);
 			isCake[(j * 20) + i] = true;
 
@@ -672,7 +693,7 @@ void HelloWorld::FiverCake()
 				cake[i]->setTag(1);
 			}
 			cake[i]->setScale(0.6f);
-			cake[i]->setPosition(1400 + (WIDTH * i), 250 + (70 * Height));
+			cake[i]->setPosition(1400 + (WIDTH * (i - lastCakeInterval)), 250 + (70 * Height));
 			cake[i]->setVisible(false);
 			isCake[i] = true;
 			if (i < 2 + lastCakeArr) Height++;
@@ -687,18 +708,25 @@ void HelloWorld::FiverCake()
 }
 void HelloWorld::ManyCake()
 {
-	for (int i = 0 + lastCakeArr; i < 3 + lastCakeArr; i++)
+	for (int i = 0 ; i < 3; i++)
 	{
-		for (int j = 0; j < 20; j++)
+		for (int j = 0 + lastCakeArr + lastCakeTemp; j < 20 + lastCakeArr+ lastCakeTemp; j++)
 		{
-			cake[i] = Sprite::create("Texture/Object/Cake/Cake.png");
-			cake[i]->setPosition(1400 + (i * WIDTH), 250 + ( j * HEIGHT));
-			cake[i]->setAnchorPoint(Point(0.0f, 0.0f));
-			cake[i]->setVisible(false);
-			this->addChild(cake[i]);
+			cake[j] = Sprite::create("Texture/Object/Cake/Cake.png");
+			cake[j]->setTag(1);
+			cake[j]->setScale(0.6f);
+			cake[j]->setPosition(1400 + (WIDTH * (j - lastCakeTemp - lastCakeInterval)), 200 + (i * 100));
+			cake[j]->setVisible(false);
+			isCake[j] = true;
+
+			this->addChild(cake[j], 5);
 		}
-		lastCakeArr += 20;
+		lastCakeTemp += 20;
 	}
+	basicStick(1200);
+	lastCakeTemp = 0;
+	lastCakeInterval += 40;
+	lastCakeArr += 60;
 }
 void HelloWorld::EatItem()
 {

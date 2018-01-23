@@ -19,14 +19,16 @@ void HelloWorld::chapte1_S1()
 	{
 	case 1:
 		i_Collecting_Cake = 0;
-		Max_Collecting_Cake = 700;
+		Max_Collecting_Cake = 500;
 		switch (Stage)
 		{
 		case 1:
-			
+			ManyCake();
+			ManyCake();
 			basicCake(1);
 			basicCake(1);
 			basicCake(1);
+			FastCake();
 			JumpCake(1);
 			JumpCake(2);
 			JumpCake(1);
@@ -39,6 +41,8 @@ void HelloWorld::chapte1_S1()
 			SlideCake();
 			VatCake();
 			VatCake();
+			JumpCake(1);
+			JumpCake(2);
 			biggerCake();
 			JumpTwoCake(2);
 			basicCake(1);
@@ -54,12 +58,12 @@ void HelloWorld::chapte1_S1()
 			basicCake(1);
 			basicCake(1);
 			basicCake(1);
+			ManyCake();
+			ManyCake();
 			JumpCake(1);
-			JumpCake(2);
 			JumpCake(1);
 			JumpTwoCake(1);
 			JumpTwoCake(2);
-			JumpTwoCake(1);
 			TeemoCake();
 			FiverCake();
 			SlideCake();
@@ -76,8 +80,6 @@ void HelloWorld::chapte1_S1()
 			TeemoCake();
 			basicCake(1);
 			basicCake(1);
-			basicCake(1);
-			JumpCake(1);
 			JumpCake(2);
 			JumpCake(1);
 			JumpTwoCake(1);
@@ -264,7 +266,7 @@ void HelloWorld::chapte1_S1()
 		//jumptwocake(); jumpcake();
 		//jumptwocake();
 	//}
-	_clear->setPosition(1400 + (60 * lastCakeArr), _clear->getPositionY());
+	_clear->setPosition(1400 + (60 * (lastCakeArr - lastCakeInterval)), _clear->getPositionY());
 	basicStick(1300);
 	//biggerCake(); 
 	//	JumpTwoCake(); basicCake(2);

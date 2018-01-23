@@ -1,5 +1,6 @@
 #include"HelloWorldScene.h"
 #define HEIGHT -30
+#define VISIBLEWIDTH 2560;
 void HelloWorld::BackGround_Setting()
 {
 	float x1 = backGround1->getPositionX();
@@ -37,22 +38,22 @@ void HelloWorld::BackGround_Setting()
 		if (bushx2 < 0)
 		{
 			bushx1 = bushx2;
-			bushx2 = bushx1 + 2560;
+			bushx2 = bushx1 + VISIBLEWIDTH;
 		}
 		if (bush1x2 < 300)
 		{
 			bush1x1 = bush1x2;
-			bush1x2 = bush1x1 + 2560;
+			bush1x2 = bush1x1 + VISIBLEWIDTH;
 		}
 		if (bush2x2 < 70)
 		{
 			bush2x1 = bush2x2;
-			bush2x2 = bush2x1 + 2560;
+			bush2x2 = bush2x1 + VISIBLEWIDTH;
 		}
 		if (cloudx2 < 0)
 		{
 			cloudx1 = cloudx2;
-			cloudx2 = cloudx1 + 2560;
+			cloudx2 = cloudx1 + VISIBLEWIDTH;
 		}
 		//if (treex2 < 0)
 		//{
@@ -87,12 +88,12 @@ void HelloWorld::BackGround_Setting()
 		if (bushx2 < 0)
 		{
 			bushx1 = bushx2;
-			bushx2 = bushx1 + 2560;
+			bushx2 = bushx1 + VISIBLEWIDTH;
 		}
 		if (treex2 < 0)
 		{
 			treex1 = treex2;
-			treex2 = treex1 + 2560;
+			treex2 = treex1 + VISIBLEWIDTH;
 		}
 		if (tree)
 			Bush[0]->setPosition(bushx1 - 10.0f, 0);

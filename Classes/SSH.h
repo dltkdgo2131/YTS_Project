@@ -1,5 +1,4 @@
-#ifndef __HELLOWORLD_SCENE_H__
-#define __HELLOWORLD_SCENE_H__
+#pragma once
 
 #include "cocos2d.h"
 USING_NS_CC;
@@ -73,5 +72,3 @@ private:
 	void SetPhysicsWorld(PhysicsWorld *world) { sceneWorld = world; };
 	bool onContactBegin(PhysicsContact &contact);
 };
-
-#endif

@@ -35,12 +35,16 @@ public:
 	Rect ca_Rect;
 
 	/// Score ///////////////
+	Sprite *s_Collecting_Cake;
+	Sprite *s_Collecting_Coin;
+
 	Label * Collecting_Cake;
 	Label * Collecting_Coin;
 	float tempCake;
-	float i_Collecting_Cake = 0;
+	float i_Collecting_Cake;
 	int Max_Collecting_Cake = 700;
 	float i_Collecting_Coin;
+	float tempCoin;
 
 	/// Vector //////////////
 	Vec2 C_location;// 플레이어 좌표
@@ -69,13 +73,16 @@ public:
 	Sprite* _clear;
 	Sprite* clear_Background;
 	Sprite* black_Background;
-	Label* goal;
 
+	Label* goal;
 	Label* clearTerm;
+	Label* clearCoin;
 
 	Sprite *back_Clear;
 	Sprite *star_tle;
 	Sprite *star[3];
+	Sprite *Fail_Particle;
+
 	Menu* ClearMenu;
 	MenuItemImage *home;
 	MenuItemImage *Next;
@@ -138,16 +145,21 @@ public:
 	void opacity_Button();
 	/// 엘리스 //////////////////
 	Sprite* C_1;
+	Sprite* _Alice[5];
 	PhysicsBody *C_1Body;
+	float _AliceDelay;
 	int Alice_Condition;
 	int sub_Condition;
+	int OpacityDirec;
 	float A_time;
 	float B_time;
 	float A_Scale;
 	float opacity_time;
 
+	bool isAlice[4];
+
 	void A_opacity();
-	void Condition_Process();
+	void Condition_Process(float dt);
 	/// Animation /////////////
 	Animation* C_ani_1;
 	Animate* C_anim_1;
@@ -161,7 +173,9 @@ public:
 	Sprite* jump_Button;
 	Sprite* slide_Button;
 
-	Sprite* stop_Button;
+	MenuItemImage* stop_Button;
+	Menu* _stop;
+	void CC_StopButton(Object* pSender);
 	Sprite* stop_BackGround;
 	Sprite* option;
 	Sprite* resume;
@@ -187,6 +201,8 @@ public:
 	void C_animation(int Select);
 	void set_Action(int index);
 	void Action_Vat(int index, int _case);
+	void Crush_Fail();
+	void Check_Star();
 
 	bool LocalToWorldPosition(Node* pSender, Point point);
 	/// Init //////////////////////
@@ -204,6 +220,8 @@ public:
 
 	/// 발판 , 케이크, 장애물 /////
 	ParticleSystemQuad *CakeParticle;
+	Label *plusCoin[30];
+	int plusArr = 0;
 
 	Animation* Spider_ani;
 	Animate* Spider_anim;
@@ -221,6 +239,7 @@ public:
 	bool isHurdle[2000];
 
 	int removeCake;
+	int removeStick = 0;
 	int case_Bat;
 	int h_Repeat;
 	float Delay_Action[1000];
@@ -232,6 +251,8 @@ public:
 	int CakeSection;
 
 	int lastCakeArr = 0;
+	int lastCakeInterval = 0;
+	int lastCakeTemp = 0;
 	int lastStickArr = 0;
 	int StickInterval = 0;
 
